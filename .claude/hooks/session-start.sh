@@ -27,3 +27,19 @@ if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
     echo "export GH_REPO=$REPO" >> "$CLAUDE_ENV_FILE"
   fi
 fi
+
+# Decrypt encrypted literature if LITERATURE_KEY is set.
+# LITERATURE_KEY should contain an age secret key (AGE-SECRET-KEY-...).
+if [ -n "${LITERATURE_KEY:-}" ]; then
+  LIT_DIR="$CLAUDE_PROJECT_DIR/literature"
+  KEY_FILE=$(mktemp)
+  echo "$LITERATURE_KEY" > "$KEY_FILE"
+  for enc_file in "$LIT_DIR"/*.enc; do
+    [ -f "$enc_file" ] || continue
+    dec_file="${enc_file%.enc}"
+    if [ ! -f "$dec_file" ]; then
+      age -d -i "$KEY_FILE" -o "$dec_file" "$enc_file" 2>/dev/null || true
+    fi
+  done
+  rm -f "$KEY_FILE"
+fi
