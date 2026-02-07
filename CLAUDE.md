@@ -17,6 +17,7 @@ projects/<name>/       # Each sub-project is a self-contained web app
   e2e/                 # E2E tests (Playwright)
   ...
 projects/_template/    # Copy this to start a new project
+literature/            # Shared reference materials (see literature/CLAUDE.md)
 docs/recipes.md        # Copy-paste patterns (Workers, D1, LLM, image gen)
 .claude/               # Hooks, settings
 ```
@@ -32,6 +33,7 @@ These are true right now and must remain true:
 - Each project in `projects/` is fully self-contained (own package.json, own deps, own build)
 - `npm run check` passes in every project that has code (after initial `npm install`)
 - No shared code or dependencies between projects
+- `literature/` contains shared read-only reference materials (not code) — see `literature/CLAUDE.md`
 
 **Each project is independent:**
 - Only add a dependency when it's actually needed (YAGNI)
@@ -145,7 +147,7 @@ Update this file as you work. It persists across sessions.
 
 ## Claude Code Web Environment
 
-CC Web has restricted network access and pre-installed tooling:
+CC Web has restricted network access and pre-installed tooling. Docs: https://code.claude.com/docs/en/claude-code-on-the-web
 
 - **Playwright pinned to v1.56.1** — do not upgrade
 - **No external URLs from browsers** — `ERR_TUNNEL_CONNECTION_FAILED`; test deployments from your own browser
