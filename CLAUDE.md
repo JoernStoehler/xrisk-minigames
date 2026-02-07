@@ -91,6 +91,18 @@ These are true right now and must remain true:
 
 ## Processes
 
+### Session Workflow
+
+Sessions follow: **read → plan → implement → review → push** · · · Jörn: **PR → merge**
+
+- **read**: Read the project's `CLAUDE.md` and `TASKS.md`. Understand scope.
+- **plan**: Decompose into steps. Push back on contradictions or gaps.
+- **implement**: Execute. Run `npm run check` as you go.
+- **review**: Re-read the result. Compare to specs. Catch drift.
+- **push**: Update `TASKS.md` (mark done, add discovered tasks). Commit and push.
+
+Agents commit and push to their working branch. Jörn creates PRs, reviews, and merges. Agents do not create PRs.
+
 ### Starting a New Project
 
 1. Copy `projects/_template/` to `projects/<name>/`
