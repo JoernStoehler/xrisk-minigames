@@ -95,13 +95,11 @@ These are true right now and must remain true:
 
 Sessions follow: **scope → plan → implement → review → push** · · · Jörn: **PR → merge**
 
-- **scope**: Read the project's `CLAUDE.md` and `TASKS.md`. Critically evaluate the assignment. Push back on contradictions, gaps, suboptimal reversible decisions. Narrow from full project scope to session task scope.
-- **plan**: Decompose into steps. Compare to conventions. Play through the plan and notice gaps.
+- **scope**: Read the project's `CLAUDE.md` and `TASKS.md`. Present your understanding back to Jörn. Flag ambiguities, contradictions, and gaps. Propose what to build and what to cut. **Wait for Jörn's feedback** before planning — he steers scope.
+- **plan**: Decompose into steps. Compare to conventions. Play through the plan and notice gaps. Present the plan to Jörn for approval.
 - **implement**: Execute the plan. Trust signatures from the plan; react to feedback from the repo.
 - **review**: Re-read the result as a whole. Compare code to plan and to scope. Run `npm run check`, visual QA, code review. Catch drift, gaps, and mismatches.
 - **push**: Update `TASKS.md` (mark done, add discovered tasks). Commit and push.
-
-Jörn gatekeeps between phases: PRs require his review before merge, and he steers scope and plan.
 
 Agents commit and push to their working branch. Jörn creates PRs, reviews, and merges. Agents do not create PRs.
 
