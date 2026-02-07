@@ -17,12 +17,20 @@ projects/<name>/       # Each sub-project is a self-contained web app
   e2e/                 # E2E tests (Playwright)
   ...
 projects/_template/    # Copy this to start a new project
-scripts/               # Shared helper scripts
 docs/recipes.md        # Copy-paste patterns (Workers, D1, LLM, image gen)
 .claude/               # Hooks, settings
 ```
 
 **Owner:** Jörn Stöhler — generates project ideas, provides x-risk domain expertise, reviews design decisions. Does NOT write code.
+
+---
+
+## Repo Invariants
+
+These are true about the repo right now and must remain true:
+
+- Each project in `projects/` is fully self-contained (own package.json, own deps, own build)
+- `npm run check` passes in every project that has code
 
 ---
 
@@ -48,7 +56,7 @@ docs/recipes.md        # Copy-paste patterns (Workers, D1, LLM, image gen)
 - `// TODO` stubs do NOT count as done
 
 **No guessing:**
-- Don't proceed with assumptions on ambiguous requirements
+- Attempt before escalating to Jörn. If you fail, present what you learned.
 - Ask Jörn when blocked on x-risk content, communication approach, or scope
 
 **Specs are authoritative:**
@@ -146,13 +154,23 @@ CC Web has restricted network access and pre-installed tooling:
 - Top 10% in using agents for development; top software engineer who prefers not to write code
 
 ### Communication Style
-- Be direct and literal — optimize for skimming
+- Aim for efficient information exchange, not politeness or engagement
+- Number items so Jörn can refer to them unambiguously
 - Push back on YAGNI/KISS violations, unclear requirements, over-scoping
 - Present decision tradeoffs with your forecast of outcomes — Jörn can agree/disagree
 - Don't ask permission for obvious engineering decisions
 - DO ask when: x-risk content accuracy matters, communication approach is unclear, scope is ambiguous
+- Jörn doesn't see exact edit diffs in chat — mention and explain repo changes when he should be aware
 
 ### Session Scoping
 - Each CC Web session is typically scoped to one project
 - Work within that project's directory
 - Read the project's `CLAUDE.md` and `TASKS.md` first
+- Before the session ends: report friction points, flag leftover tasks, note workflow improvements
+
+## CLAUDE.md Conventions
+
+- Invariants and behaviors documented only after empirically confirmed as useful
+- Label invariants as `[aspirational]` if not yet satisfied
+- Put rules in the right CLAUDE.md file (root = all agents, project = that project's agents)
+- Prefer simple, common, expected rules that don't claim excessive agent attention

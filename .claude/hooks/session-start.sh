@@ -1,46 +1,29 @@
 #!/bin/bash
 set -euo pipefail
 
-# SessionStart hook — runs on fresh session start only (matcher: "startup")
-# Input arrives as JSON on stdin; we don't need to parse it.
+# SessionStart hook (matcher: "startup") — CC Web environment setup.
+# Stdin receives JSON from Claude Code; we don't need to parse it.
 
-echo "=== X-Risk Minigames — Session Start ==="
-echo ""
-
-# Show project listing
-echo "Projects:"
-has_projects=false
-if [ -d "$CLAUDE_PROJECT_DIR/projects" ]; then
-  for dir in "$CLAUDE_PROJECT_DIR"/projects/*/; do
-    name=$(basename "$dir")
-    [ "$name" = "_template" ] && continue
-    has_projects=true
-    if [ -f "$dir/CLAUDE.md" ]; then
-      desc=$(head -5 "$dir/CLAUDE.md" | grep -m1 "^[^#]" | head -c 80 || echo "(no description)")
-      echo "  - $name: $desc"
-    else
-      echo "  - $name"
-    fi
-  done
+# Only do real work in remote (Claude Code on the web) environments
+if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
+  exit 0
 fi
-if [ "$has_projects" = false ]; then
-  echo "  (none yet — copy projects/_template/ to start)"
+
+# Install GitHub CLI if not already present
+if ! command -v gh &>/dev/null; then
+  GH_VERSION="2.86.0"
+  curl -fsSL "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz" -o /tmp/gh.tar.gz
+  tar -xzf /tmp/gh.tar.gz -C /tmp
+  cp "/tmp/gh_${GH_VERSION}_linux_amd64/bin/gh" /usr/local/bin/gh
+  rm -rf /tmp/gh.tar.gz "/tmp/gh_${GH_VERSION}_linux_amd64"
 fi
-echo ""
 
-# Show git branch
-echo "Branch: $(git -C "$CLAUDE_PROJECT_DIR" branch --show-current 2>/dev/null || echo 'unknown')"
-echo ""
-
-# CC Web: install gh CLI if not present
-if [ "${CLAUDE_CODE_REMOTE:-}" = "true" ]; then
-  if ! command -v gh &> /dev/null; then
-    echo "Installing gh CLI for CC Web..." >&2
-    GH_VERSION="2.63.2"
-    curl -fsSL "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz" \
-      | tar xz -C /tmp
-    sudo cp "/tmp/gh_${GH_VERSION}_linux_amd64/bin/gh" /usr/local/bin/gh
-    rm -rf "/tmp/gh_${GH_VERSION}_linux_amd64"
-    echo "gh CLI installed." >&2
+# Export GH_REPO so gh CLI works despite the git proxy.
+# The proxy remote is http://local_proxy@127.0.0.1:PORT/git/OWNER/REPO
+# gh can't detect the repo from this, but GH_REPO env var overrides that.
+if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
+  REPO=$(git -C "$CLAUDE_PROJECT_DIR" remote get-url origin 2>/dev/null | sed -n 's|.*/git/\(.*\)$|\1|p')
+  if [ -n "$REPO" ]; then
+    echo "export GH_REPO=$REPO" >> "$CLAUDE_ENV_FILE"
   fi
 fi
