@@ -5,4 +5,4 @@
 
 | File | Title | Author | Year | Encrypted |
 |------|-------|--------|------|-----------|
-| *(none yet)* | | | | |
+| ai-2027.md | AI 2027 | Daniel Kokotajlo, Scott Alexander, Thomas Larsen, Eli Lifland, Romeo Dean | 2025 | No |
