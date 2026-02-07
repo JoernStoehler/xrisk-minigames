@@ -146,8 +146,10 @@ CC Web has restricted network access and pre-installed tooling:
 ### Jörn's Expertise
 - Top 100 expert on ASI x-risk, AI capabilities/trends, AI governance
 - Average expert in forecasting, geopolitics, x-risk communication
+- NOT an expert in science communication broadly or web-based interactive design
 - Self-described bad taste in design/UX/game mechanics
 - Top 10% in using agents for development; top software engineer who prefers not to write code
+- Provides the "what to communicate" (x-risk concepts) but agents own the "how" (web experience design)
 
 ### Communication Style
 - Aim for efficient information exchange, not politeness or engagement
