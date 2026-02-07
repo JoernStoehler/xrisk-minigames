@@ -27,17 +27,13 @@ docs/recipes.md        # Copy-paste patterns (Workers, D1, LLM, image gen)
 
 ## Repo Invariants
 
-These are true about the repo right now and must remain true:
+These are true right now and must remain true:
 
 - Each project in `projects/` is fully self-contained (own package.json, own deps, own build)
-- `npm run check` passes in every project that has code
-
----
-
-## Invariants
+- `npm run check` passes in every project that has code (after initial `npm install`)
+- No shared code or dependencies between projects
 
 **Each project is independent:**
-- Own `package.json`, own deps, own build, own deploy
 - Only add a dependency when it's actually needed (YAGNI)
 - No shared node_modules or workspace hoisting
 
@@ -56,8 +52,8 @@ These are true about the repo right now and must remain true:
 - `// TODO` stubs do NOT count as done
 
 **No guessing:**
-- Attempt before escalating to Jörn. If you fail, present what you learned.
-- Ask Jörn when blocked on x-risk content, communication approach, or scope
+- For engineering problems: attempt before escalating. If you fail, present what you learned.
+- For x-risk content, communication approach, or scope: ask Jörn directly — don't guess on domain expertise you don't have
 
 **Specs are authoritative:**
 - Each project's `CLAUDE.md` defines what to build
@@ -141,7 +137,7 @@ CC Web has restricted network access and pre-installed tooling:
 
 - **Playwright pinned to v1.56.1** — do not upgrade
 - **No external URLs from browsers** — `ERR_TUNNEL_CONNECTION_FAILED`; test deployments from your own browser
-- **Setup command:** `npm run setup:ccweb` (installs browsers + deps)
+- **First run in a project:** `npm run setup:ccweb` (installs Playwright browsers + npm deps)
 
 ---
 
