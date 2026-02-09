@@ -8,6 +8,7 @@ interface SidebarProps {
   unreadCount: number;
   spamCount: number;
   onNewGame: () => void;
+  onShowDisclaimer: () => void;
 }
 
 export function Sidebar({
@@ -18,6 +19,7 @@ export function Sidebar({
   unreadCount,
   spamCount,
   onNewGame,
+  onShowDisclaimer,
 }: SidebarProps) {
   return (
     <div className="h-full flex flex-col p-3 gap-5 overflow-y-auto">
@@ -95,13 +97,19 @@ export function Sidebar({
         />
       </div>
 
-      {/* Spacer + New Game */}
-      <div className="mt-auto pt-4 border-t border-[#ececf1]">
+      {/* Spacer + Footer */}
+      <div className="mt-auto pt-4 border-t border-[#ececf1] space-y-0.5">
         <button
           onClick={onNewGame}
           className="w-full px-3 py-2 text-[11px] text-[#8e8ea0] hover:text-[#0d0d0d] hover:bg-[#ececf1]/50 rounded-lg transition-colors text-left"
         >
           New game
+        </button>
+        <button
+          onClick={onShowDisclaimer}
+          className="w-full px-3 py-2 text-[11px] text-[#8e8ea0] hover:text-[#0d0d0d] hover:bg-[#ececf1]/50 rounded-lg transition-colors text-left"
+        >
+          Legal notice
         </button>
       </div>
     </div>

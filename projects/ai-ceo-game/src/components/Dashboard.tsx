@@ -4,6 +4,7 @@ import { saveUIState, loadUIState } from "../engine/useGame";
 import { Inbox } from "./Inbox";
 import { EmailView } from "./EmailView";
 import { Sidebar } from "./Sidebar";
+import { Disclaimer } from "./Disclaimer";
 
 interface DashboardProps {
   state: GameState;
@@ -31,6 +32,7 @@ export function Dashboard({
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(() => loadUIState().selectedEmailId);
   const [showSpam, setShowSpam] = useState(() => loadUIState().showSpam);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   // Persist UI state
   useEffect(() => {
@@ -127,6 +129,7 @@ export function Dashboard({
             unreadCount={unreadCount}
             spamCount={spamEmails.length}
             onNewGame={onNewGame}
+            onShowDisclaimer={() => setShowDisclaimer(true)}
           />
         </aside>
 
@@ -156,6 +159,10 @@ export function Dashboard({
           )}
         </main>
       </div>
+
+      {showDisclaimer && (
+        <Disclaimer onClose={() => setShowDisclaimer(false)} />
+      )}
     </div>
   );
 }
