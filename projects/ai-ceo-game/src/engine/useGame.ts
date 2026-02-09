@@ -1,3 +1,20 @@
+/**
+ * Main game hook — the only stateful layer between the pure engine and React components.
+ *
+ * Responsibilities:
+ * - Persists GameState to localStorage (auto-save on every state change)
+ * - Computes visible emails by running all scenario generators against current state
+ * - Provides advanceToNext() which skips time to the next email delivery date
+ * - Exposes reply/read/star/restart callbacks for components
+ *
+ * Email computation (computeEmails): for each EmailDef in scenario.ts, resolves its
+ * delivery date, checks if ≤ currentDate, runs the generator, overlays UI state
+ * (read/starred/chosenReply), and strips expired reply options.
+ *
+ * Time advancement (advanceToNext): finds the earliest future email date across all
+ * generators, then loops advanceDay() until reaching it. If no future emails exist,
+ * fast-forwards to game end (Sep 15, 2028).
+ */
 import { useState, useCallback, useMemo, useEffect } from "react";
 import type { Email, GameState, NarrativeContext } from "./types";
 import { createInitialState, advanceDay, handleReply, markRead, toggleStar } from "./state";

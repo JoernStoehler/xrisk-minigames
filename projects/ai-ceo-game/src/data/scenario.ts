@@ -1,3 +1,31 @@
+/**
+ * All game content lives here: ~30 EmailDefs spanning Oct 2026 → Sep 2028.
+ *
+ * Content authoring patterns:
+ *
+ * 1. Fixed-date email (no interaction):
+ *    { id: "foo", date: "2027-03-01", generate: (_ctx, date) => ({ id: "foo", from: PEOPLE.x, ... }) }
+ *
+ * 2. Decision email (player chooses a reply):
+ *    Same as above, but generate() returns replyOptions[] with decisionId + effects.
+ *    Add replyExpiresOn: addDays(date, N) so the window closes if ignored.
+ *
+ * 3. Triggered email (fires N days after a specific decision):
+ *    { id: "bar", date: (ctx) => {
+ *        const d = decisionDate(ctx, "some-decision");
+ *        if (!d || !chose(ctx, "some-decision", "some-choice")) return null;
+ *        return addDays(d, 14);  // arrives 2 weeks after the decision
+ *      }, generate: ... }
+ *
+ * 4. Context-aware body text:
+ *    generate: (ctx, date) => {
+ *      const didX = chose(ctx, "decision-id", "choice-id");
+ *      return { ..., body: didX ? "variant A" : "variant B" };
+ *    }
+ *
+ * Ordering in this array doesn't matter — delivery is determined by resolved dates.
+ * See CLAUDE.md "Current Decision Map" for the full branching tree.
+ */
 import type { EmailDef, Person } from "../engine/types";
 import { chose, decisionDate } from "../engine/types";
 import { addDays } from "../engine/state";

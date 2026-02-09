@@ -1,3 +1,16 @@
+/**
+ * Core type definitions for the AI CEO game engine.
+ *
+ * Key concepts:
+ * - GameState: the only persisted data (currentDate, metrics, emailUI, decisions, phase)
+ * - Email: computed on-demand from EmailDef generators — never stored
+ * - EmailDef: a scenario entry with a date (fixed or computed) and a generator function
+ * - NarrativeContext: read-only snapshot passed to generators (currentDate, decisions, metrics)
+ *
+ * Narrative helpers (chose, decided, decisionDate) are used in scenario.ts generators
+ * to branch content based on player choices.
+ */
+
 // === People ===
 
 export interface Person {

@@ -1,3 +1,14 @@
+/**
+ * Pure state transition functions — no side effects, no React.
+ *
+ * createInitialState() → starting state (Oct 14, 2026)
+ * advanceDay()         → tick one day: metrics drift, check for game end (Sep 15, 2028)
+ * handleReply()        → record decision, apply effects, optionally end game
+ * applyEffects()       → clamp metric deltas to valid ranges
+ * addDays()            → date arithmetic utility used by scenario.ts for triggered emails
+ *
+ * All functions are pure: (state, input) → newState. The only stateful layer is useGame.ts.
+ */
 import type { Email, GameState, GameMetrics, Decision, StateEffect } from "./types";
 
 const INITIAL_METRICS: GameMetrics = {
