@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Email, GameState } from "../engine/types";
+import { saveUIState, loadUIState } from "../engine/useGame";
 import { Inbox } from "./Inbox";
 import { EmailView } from "./EmailView";
 import { Sidebar } from "./Sidebar";
@@ -8,27 +9,42 @@ interface DashboardProps {
   state: GameState;
   inboxEmails: Email[];
   spamEmails: Email[];
-  onNextDay: () => void;
+  onAdvance: () => void;
+  nextEmailDate: string | null;
   onReply: (emailId: string, replyId: string) => void;
   onSpam: (emailId: string) => void;
   onRead: (emailId: string) => void;
+  onNewGame: () => void;
 }
 
 export function Dashboard({
   state,
   inboxEmails,
   spamEmails,
-  onNextDay,
+  onAdvance,
+  nextEmailDate,
   onReply,
   onSpam,
   onRead,
+  onNewGame,
 }: DashboardProps) {
-  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
-  const [showSpam, setShowSpam] = useState(false);
+  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(() => loadUIState().selectedEmailId);
+  const [showSpam, setShowSpam] = useState(() => loadUIState().showSpam);
   const [showSidebar, setShowSidebar] = useState(false);
 
+  // Persist UI state
+  useEffect(() => {
+    saveUIState({ selectedEmailId, showSpam });
+  }, [selectedEmailId, showSpam]);
+
   const currentList = showSpam ? spamEmails : inboxEmails;
-  const selectedEmail = currentList.find((e) => e.id === selectedEmailId);
+  // If selected email was moved to spam, deselect it
+  const effectiveSelectedId = currentList.some((e) => e.id === selectedEmailId)
+    ? selectedEmailId
+    : null;
+  const selectedEmail = effectiveSelectedId
+    ? currentList.find((e) => e.id === effectiveSelectedId)
+    : undefined;
 
   const handleSelectEmail = (id: string) => {
     setSelectedEmailId(id);
@@ -41,9 +57,15 @@ export function Dashboard({
 
   const unreadCount = inboxEmails.filter((e) => !e.read).length;
 
+  const allCaughtUp = inboxEmails.length > 0 && unreadCount === 0;
+
+  const advanceTitle = nextEmailDate
+    ? `Skip to ${formatShortDate(nextEmailDate)}`
+    : "Skip ahead";
+
   return (
     <div className="h-dvh flex flex-col bg-[#f7f7f8] text-[#0d0d0d]">
-      {/* Top bar — minimal, OpenAI-style */}
+      {/* Top bar */}
       <header className="flex items-center justify-between px-4 py-2.5 bg-white border-b border-[#e5e5e5] shrink-0">
         <div className="flex items-center gap-3">
           <button
@@ -60,18 +82,26 @@ export function Dashboard({
               <circle cx="12" cy="12" r="10" fill="#0d0d0d" />
               <circle cx="12" cy="12" r="3" fill="white" />
             </svg>
-            <span className="text-sm font-medium text-[#0d0d0d]">OpenAI Mail</span>
+            <span className="text-sm font-medium text-[#0d0d0d]">Mail</span>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-xs text-[#8e8ea0]">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#8e8ea0] tabular-nums">
             {formatDate(state.currentDate)}
           </span>
           <button
-            onClick={onNextDay}
-            className="px-4 py-1.5 text-xs font-medium bg-[#0d0d0d] hover:bg-[#2d2d2d] text-white rounded-full transition-colors"
+            onClick={onAdvance}
+            title={advanceTitle}
+            className={`
+              w-7 h-7 flex items-center justify-center rounded-full transition-all
+              ${allCaughtUp
+                ? "bg-[#0d0d0d] text-white animate-pulse"
+                : "bg-[#ececf1] text-[#6e6e80] hover:bg-[#d9d9e3] hover:text-[#0d0d0d]"}
+            `}
           >
-            Next Day
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
           </button>
         </div>
       </header>
@@ -96,6 +126,7 @@ export function Dashboard({
             inboxCount={inboxEmails.length}
             unreadCount={unreadCount}
             spamCount={spamEmails.length}
+            onNewGame={onNewGame}
           />
         </aside>
 
@@ -136,5 +167,14 @@ function formatDate(dateStr: string): string {
     month: "short",
     day: "numeric",
     year: "numeric",
+  });
+}
+
+function formatShortDate(dateStr: string): string {
+  const d = new Date(dateStr + "T12:00:00");
+  return d.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
   });
 }

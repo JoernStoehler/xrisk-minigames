@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo } from "react";
-import type { Email, GameState } from "./types";
+import { useState, useCallback, useMemo, useEffect } from "react";
+import type { GameState } from "./types";
 import {
   createInitialState,
   advanceDay,
@@ -9,7 +9,47 @@ import {
 } from "./state";
 import { baselineEmails } from "../data/baseline";
 
-function getAvailableEmails(state: GameState): Email[] {
+const STORAGE_KEY = "ai-ceo-game-state";
+const UI_STORAGE_KEY = "ai-ceo-game-ui";
+
+export interface UIState {
+  selectedEmailId: string | null;
+  showSpam: boolean;
+}
+
+function saveState(state: GameState) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch { /* full or unavailable */ }
+}
+
+function loadState(): GameState | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as GameState;
+  } catch {
+    return null;
+  }
+}
+
+export function saveUIState(ui: UIState) {
+  try {
+    localStorage.setItem(UI_STORAGE_KEY, JSON.stringify(ui));
+  } catch { /* ignore */ }
+}
+
+export function loadUIState(): UIState {
+  try {
+    const raw = localStorage.getItem(UI_STORAGE_KEY);
+    if (!raw) return { selectedEmailId: null, showSpam: false };
+    return JSON.parse(raw) as UIState;
+  } catch {
+    return { selectedEmailId: null, showSpam: false };
+  }
+}
+
+function getAvailableEmails(state: GameState) {
   const currentDate = state.currentDate;
   return baselineEmails
     .filter((e) => {
@@ -17,47 +57,64 @@ function getAvailableEmails(state: GameState): Email[] {
       return e.date <= currentDate;
     })
     .map((e) => {
-      // Check if this email is already in state (has been interacted with)
       const existing = state.emails.find((se) => se.id === e.id);
       if (existing) return existing;
       return e;
     });
 }
 
-function resolveInjectedEmails(state: GameState): Email[] {
-  // Injected emails with relative dates ("+N" days from trigger)
-  // These are already in state.emails from modifier application
+function resolveInjectedEmails(state: GameState) {
   return state.emails.filter((e) => {
-    // Only include injected emails (not baseline ones)
     return !baselineEmails.find((b) => b.id === e.id);
   });
 }
 
+/** Find next date that has a new email arriving */
+function getNextEmailDate(state: GameState): string | null {
+  const currentDate = state.currentDate;
+
+  const futureBaseline = baselineEmails
+    .filter((e) => e.date > currentDate && !state.suppressedEmailIds.includes(e.id))
+    .map((e) => e.date);
+
+  const futureInjected = state.emails
+    .filter((e) => e.date > currentDate && !e.date.startsWith("+"))
+    .map((e) => e.date);
+
+  const allDates = [...futureBaseline, ...futureInjected].sort();
+  return allDates[0] ?? null;
+}
+
+function resolveRelativeDates(state: GameState, baseDate: string): GameState {
+  return {
+    ...state,
+    emails: state.emails.map((e) => {
+      if (e.date.startsWith("+")) {
+        const days = parseInt(e.date.slice(1));
+        const d = new Date(baseDate);
+        d.setDate(d.getDate() + days);
+        return { ...e, date: d.toISOString().split("T")[0] };
+      }
+      return e;
+    }),
+  };
+}
+
 export function useGame() {
-  const [state, setState] = useState<GameState>(createInitialState);
+  const [state, setState] = useState<GameState>(() => {
+    return loadState() ?? createInitialState();
+  });
+
+  // Persist on every change
+  useEffect(() => {
+    saveState(state);
+  }, [state]);
 
   const allEmails = useMemo(() => {
     const baseline = getAvailableEmails(state);
     const injected = resolveInjectedEmails(state);
 
-    // Resolve relative dates for injected emails
-    const resolved = injected.map((e) => {
-      if (e.date.startsWith("+")) {
-        const daysOffset = parseInt(e.date.slice(1));
-        // Find the modifier that injected this email to calculate relative date
-        const triggerDate = new Date(state.currentDate);
-        triggerDate.setDate(triggerDate.getDate() - daysOffset);
-        // Actually, we should store the trigger date. For now, use the email's
-        // intended arrival: trigger date + offset
-        // Since we add emails when modifier fires, we'll resolve the date then
-        return e;
-      }
-      return e;
-    });
-
-    // Combine and sort by date
-    const combined = [...baseline, ...resolved];
-    // Deduplicate by ID
+    const combined = [...baseline, ...injected];
     const seen = new Set<string>();
     const unique = combined.filter((e) => {
       if (seen.has(e.id)) return false;
@@ -77,47 +134,37 @@ export function useGame() {
     [allEmails],
   );
 
-  const nextDay = useCallback(() => {
+  const nextEmailDate = useMemo(() => getNextEmailDate(state), [state]);
+
+  /** Advance to the date of the next email arrival */
+  const advanceToNext = useCallback(() => {
     setState((prev) => {
       if (prev.phase !== "playing") return prev;
 
-      let next = advanceDay(prev);
+      const targetDate = getNextEmailDate(prev);
+      if (!targetDate) {
+        // No more emails -- fast-forward to extinction
+        let s = prev;
+        while (s.phase === "playing") {
+          s = advanceDay(s);
+        }
+        return s;
+      }
 
-      // Resolve injected emails with relative dates
-      next = {
-        ...next,
-        emails: next.emails.map((e) => {
-          if (e.date.startsWith("+")) {
-            const days = parseInt(e.date.slice(1));
-            const d = new Date(prev.currentDate);
-            d.setDate(d.getDate() + days);
-            return { ...e, date: d.toISOString().split("T")[0] };
-          }
-          return e;
-        }),
-      };
+      // Advance day-by-day to target
+      let s = prev;
+      while (s.currentDate < targetDate && s.phase === "playing") {
+        s = advanceDay(s);
+      }
 
-      return next;
+      return resolveRelativeDates(s, prev.currentDate);
     });
   }, []);
 
   const reply = useCallback((emailId: string, replyId: string) => {
     setState((prev) => {
-      let next = handleReply(prev, emailId, replyId);
-      // Resolve dates on any newly injected emails
-      next = {
-        ...next,
-        emails: next.emails.map((e) => {
-          if (e.date.startsWith("+")) {
-            const days = parseInt(e.date.slice(1));
-            const d = new Date(prev.currentDate);
-            d.setDate(d.getDate() + days);
-            return { ...e, date: d.toISOString().split("T")[0] };
-          }
-          return e;
-        }),
-      };
-      return next;
+      const next = handleReply(prev, emailId, replyId);
+      return resolveRelativeDates(next, prev.currentDate);
     });
   }, []);
 
@@ -130,6 +177,8 @@ export function useGame() {
   }, []);
 
   const restart = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(UI_STORAGE_KEY);
     setState(createInitialState());
   }, []);
 
@@ -137,7 +186,8 @@ export function useGame() {
     state,
     inboxEmails,
     spamEmails,
-    nextDay,
+    advanceToNext,
+    nextEmailDate,
     reply,
     spam,
     read,

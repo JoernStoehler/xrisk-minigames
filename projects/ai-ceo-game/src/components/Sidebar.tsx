@@ -7,6 +7,7 @@ interface SidebarProps {
   inboxCount: number;
   unreadCount: number;
   spamCount: number;
+  onNewGame: () => void;
 }
 
 export function Sidebar({
@@ -16,6 +17,7 @@ export function Sidebar({
   inboxCount,
   unreadCount,
   spamCount,
+  onNewGame,
 }: SidebarProps) {
   return (
     <div className="h-full flex flex-col p-3 gap-5 overflow-y-auto">
@@ -91,6 +93,16 @@ export function Sidebar({
           warn={metrics.oversight < 30}
           color="amber"
         />
+      </div>
+
+      {/* Spacer + New Game */}
+      <div className="mt-auto pt-4 border-t border-[#ececf1]">
+        <button
+          onClick={onNewGame}
+          className="w-full px-3 py-2 text-[11px] text-[#8e8ea0] hover:text-[#0d0d0d] hover:bg-[#ececf1]/50 rounded-lg transition-colors text-left"
+        >
+          New game
+        </button>
       </div>
     </div>
   );

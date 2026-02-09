@@ -4,5 +4,5 @@ import App from "./App";
 
 test("renders dashboard", () => {
   render(<App />);
-  expect(screen.getByText(/OpenAI/)).toBeDefined();
+  expect(screen.getByText("Mail")).toBeDefined();
 });
