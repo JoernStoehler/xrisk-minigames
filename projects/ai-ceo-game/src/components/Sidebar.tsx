@@ -18,81 +18,89 @@ export function Sidebar({
   spamCount,
 }: SidebarProps) {
   return (
-    <div className="h-full flex flex-col p-4 gap-6">
+    <div className="h-full flex flex-col p-3 gap-5 overflow-y-auto">
       {/* Folders */}
-      <nav className="space-y-1">
+      <nav className="space-y-0.5">
         <button
           onClick={() => showSpam && onToggleSpam()}
-          className={`w-full flex items-center justify-between px-3 py-2 rounded text-sm transition-colors ${
+          className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[13px] transition-colors ${
             !showSpam
-              ? "bg-blue-600/20 text-blue-400"
-              : "text-gray-400 hover:text-white hover:bg-gray-800"
+              ? "bg-[#ececf1] text-[#0d0d0d] font-medium"
+              : "text-[#6e6e80] hover:bg-[#ececf1]/50"
           }`}
         >
           <span>Inbox</span>
           {unreadCount > 0 && (
-            <span className="text-xs bg-blue-600 text-white px-1.5 py-0.5 rounded-full">
+            <span className="text-[11px] bg-[#0d0d0d] text-white w-5 h-5 flex items-center justify-center rounded-full font-medium">
               {unreadCount}
             </span>
           )}
           {unreadCount === 0 && (
-            <span className="text-xs text-gray-600">{inboxCount}</span>
+            <span className="text-[11px] text-[#8e8ea0]">{inboxCount}</span>
           )}
         </button>
         <button
           onClick={() => !showSpam && onToggleSpam()}
-          className={`w-full flex items-center justify-between px-3 py-2 rounded text-sm transition-colors ${
+          className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[13px] transition-colors ${
             showSpam
-              ? "bg-blue-600/20 text-blue-400"
-              : "text-gray-400 hover:text-white hover:bg-gray-800"
+              ? "bg-[#ececf1] text-[#0d0d0d] font-medium"
+              : "text-[#6e6e80] hover:bg-[#ececf1]/50"
           }`}
         >
           <span>Spam</span>
-          <span className="text-xs text-gray-600">{spamCount}</span>
+          <span className="text-[11px] text-[#8e8ea0]">{spamCount}</span>
         </button>
       </nav>
 
+      <div className="h-px bg-[#ececf1]" />
+
       {/* Metrics */}
       <div className="space-y-3">
-        <div className="text-[10px] font-medium text-gray-600 uppercase tracking-wider">
-          Company Metrics
+        <div className="text-[10px] font-medium text-[#8e8ea0] uppercase tracking-wider px-1">
+          Company
         </div>
-        <MetricBar label="Stock" value={`$${metrics.stockPrice.toFixed(0)}`} />
-        <MetricBar
-          label="Revenue"
-          value={`$${metrics.revenue.toFixed(1)}B/q`}
-        />
+        <MetricRow label="OAIN" value={`$${metrics.stockPrice.toFixed(0)}`} />
+        <MetricRow label="Revenue" value={`$${metrics.revenue.toFixed(1)}B/q`} />
         <MetricBar
           label="Public Trust"
           value={`${metrics.publicTrust.toFixed(0)}%`}
           pct={metrics.publicTrust}
         />
         <MetricBar
-          label="Board Conf."
+          label="Board"
           value={`${metrics.boardConfidence.toFixed(0)}%`}
           pct={metrics.boardConfidence}
-          color={metrics.boardConfidence < 30 ? "red" : undefined}
+          warn={metrics.boardConfidence < 30}
         />
       </div>
 
-      {/* Internal metrics (more subtle) */}
       <div className="space-y-3">
-        <div className="text-[10px] font-medium text-gray-600 uppercase tracking-wider">
+        <div className="text-[10px] font-medium text-[#8e8ea0] uppercase tracking-wider px-1">
           Internal
         </div>
         <MetricBar
           label="AI Capability"
           value={`${metrics.aiCapability.toFixed(0)}`}
           pct={metrics.aiCapability}
-          color="emerald"
+          color="dark"
         />
         <MetricBar
           label="Oversight"
           value={`${metrics.oversight.toFixed(0)}%`}
           pct={metrics.oversight}
-          color={metrics.oversight < 30 ? "red" : "amber"}
+          warn={metrics.oversight < 30}
+          color="amber"
         />
       </div>
+    </div>
+  );
+}
+
+function MetricRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between items-baseline px-1">
+      <span className="text-xs text-[#6e6e80]">{label}</span>
+      <span className="text-[13px] font-medium text-[#0d0d0d] tabular-nums">{value}</span>
     </div>
   );
 }
@@ -101,34 +109,37 @@ function MetricBar({
   label,
   value,
   pct,
-  color = "blue",
+  color = "default",
+  warn = false,
 }: {
   label: string;
   value: string;
-  pct?: number;
+  pct: number;
   color?: string;
+  warn?: boolean;
 }) {
-  const colorMap: Record<string, string> = {
-    blue: "from-blue-600 to-blue-400",
-    emerald: "from-emerald-600 to-emerald-400",
-    amber: "from-amber-600 to-amber-400",
-    red: "from-red-600 to-red-400",
-  };
+  const barColor = warn
+    ? "bg-[#ef4444]"
+    : color === "dark"
+      ? "bg-[#0d0d0d]"
+      : color === "amber"
+        ? "bg-[#f59e0b]"
+        : "bg-[#6e6e80]";
 
   return (
-    <div>
+    <div className="px-1">
       <div className="flex justify-between text-xs mb-1">
-        <span className="text-gray-500">{label}</span>
-        <span className="text-gray-300 font-mono">{value}</span>
+        <span className="text-[#6e6e80]">{label}</span>
+        <span className={`tabular-nums ${warn ? "text-[#ef4444] font-medium" : "text-[#353740]"}`}>
+          {value}
+        </span>
       </div>
-      {pct !== undefined && (
-        <div className="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
-          <div
-            className={`h-full rounded-full bg-gradient-to-r ${colorMap[color] ?? colorMap.blue} transition-all duration-500`}
-            style={{ width: `${Math.max(0, Math.min(100, pct))}%` }}
-          />
-        </div>
-      )}
+      <div className="w-full bg-[#ececf1] rounded-full h-1 overflow-hidden">
+        <div
+          className={`h-full rounded-full ${barColor} transition-all duration-500`}
+          style={{ width: `${Math.max(0, Math.min(100, pct))}%` }}
+        />
+      </div>
     </div>
   );
 }

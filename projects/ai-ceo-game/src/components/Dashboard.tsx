@@ -42,30 +42,34 @@ export function Dashboard({
   const unreadCount = inboxEmails.filter((e) => !e.read).length;
 
   return (
-    <div className="h-dvh flex flex-col bg-gray-950 text-gray-100">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800 shrink-0">
+    <div className="h-dvh flex flex-col bg-[#f7f7f8] text-[#0d0d0d]">
+      {/* Top bar — minimal, OpenAI-style */}
+      <header className="flex items-center justify-between px-4 py-2.5 bg-white border-b border-[#e5e5e5] shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowSidebar(!showSidebar)}
-            className="text-gray-400 hover:text-white lg:hidden"
+            className="text-[#8e8ea0] hover:text-[#0d0d0d] lg:hidden"
             aria-label="Toggle sidebar"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <h1 className="text-sm font-semibold tracking-wide text-gray-300">
-            OpenAI — CEO Dashboard
-          </h1>
+          <div className="flex items-center gap-2.5">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" fill="#0d0d0d" />
+              <circle cx="12" cy="12" r="3" fill="white" />
+            </svg>
+            <span className="text-sm font-medium text-[#0d0d0d]">OpenAI Mail</span>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-gray-500 font-mono">
+        <div className="flex items-center gap-4">
+          <span className="text-xs text-[#8e8ea0]">
             {formatDate(state.currentDate)}
           </span>
           <button
             onClick={onNextDay}
-            className="px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-500 rounded transition-colors"
+            className="px-4 py-1.5 text-xs font-medium bg-[#0d0d0d] hover:bg-[#2d2d2d] text-white rounded-full transition-colors"
           >
             Next Day
           </button>
@@ -73,13 +77,13 @@ export function Dashboard({
       </header>
 
       <div className="flex flex-1 min-h-0">
-        {/* Sidebar - hidden on mobile unless toggled */}
+        {/* Sidebar */}
         <aside
           className={`
             ${showSidebar ? "translate-x-0" : "-translate-x-full"}
             lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-30
-            w-64 bg-gray-900 border-r border-gray-800 transition-transform
-            lg:block pt-14 lg:pt-0
+            w-60 bg-[#f7f7f8] border-r border-[#e5e5e5] transition-transform
+            lg:block pt-12 lg:pt-0
           `}
         >
           <Sidebar
@@ -95,10 +99,9 @@ export function Dashboard({
           />
         </aside>
 
-        {/* Overlay for mobile sidebar */}
         {showSidebar && (
           <div
-            className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+            className="fixed inset-0 bg-black/20 z-20 lg:hidden"
             onClick={() => setShowSidebar(false)}
           />
         )}

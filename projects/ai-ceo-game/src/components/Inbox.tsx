@@ -9,65 +9,70 @@ interface InboxProps {
 export function Inbox({ emails, onSelect, isSpam }: InboxProps) {
   if (emails.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-500 text-sm">
-        {isSpam ? "Spam folder is empty." : "No emails yet. Advance to the next day."}
+      <div className="flex flex-col items-center justify-center h-full text-[#8e8ea0] text-sm gap-3 p-8">
+        <svg className="w-16 h-16 text-[#d9d9e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.75} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        {isSpam ? "No spam" : "No new messages"}
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-gray-800">
-      {emails.map((email) => (
+    <div className="bg-white h-full">
+      {emails.map((email, i) => (
         <button
           key={email.id}
           onClick={() => onSelect(email.id)}
           className={`
-            w-full text-left px-4 py-3 hover:bg-gray-900/50 transition-colors
-            ${!email.read ? "bg-gray-900/30" : ""}
+            w-full text-left px-5 py-3 transition-colors cursor-pointer
+            ${i > 0 ? "border-t border-[#ececf1]" : ""}
+            ${!email.read ? "bg-white" : "bg-[#fafafb]"}
+            hover:bg-[#f0f0f3]
           `}
         >
           <div className="flex items-start gap-3">
-            {/* Unread indicator */}
-            <div className="pt-1.5 shrink-0">
-              {!email.read && (
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-              )}
-              {email.read && <div className="w-2 h-2" />}
+            {/* Avatar */}
+            <div className={`
+              w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-[11px] font-medium mt-0.5
+              ${!email.read ? "bg-[#0d0d0d] text-white" : "bg-[#e5e5e5] text-[#6e6e80]"}
+            `}>
+              {email.from.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
             </div>
+
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between gap-2">
-                <span
-                  className={`text-sm truncate ${!email.read ? "font-semibold text-white" : "text-gray-300"}`}
-                >
+                <span className={`text-[13px] truncate ${!email.read ? "font-semibold text-[#0d0d0d]" : "text-[#6e6e80]"}`}>
                   {email.from.name}
                 </span>
-                <span className="text-xs text-gray-600 shrink-0 font-mono">
+                <span className="text-[11px] text-[#8e8ea0] shrink-0">
                   {formatShortDate(email.date)}
                 </span>
               </div>
-              <div
-                className={`text-sm truncate ${!email.read ? "font-medium text-gray-200" : "text-gray-400"}`}
-              >
+              <div className={`text-[13px] truncate ${!email.read ? "font-medium text-[#353740]" : "text-[#8e8ea0]"}`}>
                 {email.subject}
               </div>
-              <div className="text-xs text-gray-600 truncate mt-0.5">
+              <div className="text-xs text-[#8e8ea0] truncate mt-0.5 leading-relaxed">
                 {getPreview(email.body)}
               </div>
-              {/* Indicators */}
-              <div className="flex gap-1.5 mt-1">
+              {/* Badges */}
+              <div className="flex gap-1.5 mt-1.5">
                 {email.replyOptions && !email.chosenReply && (
-                  <span className="text-[10px] px-1.5 py-0.5 bg-amber-900/50 text-amber-400 rounded">
+                  <span className="text-[10px] px-2 py-0.5 bg-[#fff3cd] text-[#856404] rounded-full font-medium">
                     Action needed
                   </span>
                 )}
                 {email.chosenReply && (
-                  <span className="text-[10px] px-1.5 py-0.5 bg-green-900/50 text-green-400 rounded">
+                  <span className="text-[10px] px-2 py-0.5 bg-oai-green-light text-[#065f46] rounded-full font-medium">
                     Replied
                   </span>
                 )}
                 {email.attachments && email.attachments.length > 0 && (
-                  <span className="text-[10px] px-1.5 py-0.5 bg-gray-800 text-gray-400 rounded">
-                    {email.attachments.length} attachment{email.attachments.length > 1 ? "s" : ""}
+                  <span className="text-[10px] px-2 py-0.5 bg-[#f0f0f3] text-[#6e6e80] rounded-full flex items-center gap-0.5">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                    {email.attachments.length}
                   </span>
                 )}
               </div>
@@ -85,9 +90,7 @@ function formatShortDate(dateStr: string): string {
 }
 
 function getPreview(body: string): string {
-  // Get first meaningful line
   const lines = body.split("\n").filter((l) => l.trim().length > 0);
-  // Skip greeting
   const start = lines.findIndex(
     (l) => !l.trim().endsWith(",") && l.trim().length > 20,
   );
