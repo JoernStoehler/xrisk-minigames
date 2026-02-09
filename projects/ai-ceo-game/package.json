@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "check": "npm run typecheck && npm run lint && npm run build && npm test",
-    "setup:ccweb": "npx playwright install --with-deps chromium 2>/dev/null; npm install"
+    "setup:ccweb": "npx playwright install --with-deps chromium 2>/dev/null; npm install",
+    "playthrough": "tsx scripts/playthrough.ts"
   },
   "dependencies": {
     "react": "^19.2.0",
