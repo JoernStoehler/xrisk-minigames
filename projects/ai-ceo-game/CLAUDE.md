@@ -126,6 +126,32 @@ Decision 5: Safety Evals Broken (Nov 2027)
 
 After Decision 5, the game enters its final act (Jan–Sep 2028) with informational emails showing the system running itself. All paths converge to extinction.
 
+## Common Pitfalls
+
+- **localStorage save format**: When `GameState` shape changes, old saves break. Users need "New game" to clear. Consider bumping a version key if you change the shape.
+- **Scripts duplicate engine logic**: `cli.ts`, `play.ts`, `playthrough.ts` all duplicate `computeEmails`/`getNextEmailDate` from `useGame.ts` because `useGame` is a React hook. If engine logic changes, update scripts too.
+
+## Owner Preferences
+
+- OpenAI 2025 rebrand styling: light mode, `#0d0d0d` / `#f7f7f8`, minimalist
+- Mobile-first, "Mail" branding (not "OpenAI Mail")
+- KISS: no spam folder, no search bar (browser Ctrl+F suffices)
+- Immersion > game mechanics: time skips mail-to-mail, not turn-based
+- Owner is German: Impressum required (TMG §5)
+- Owner provides x-risk domain expertise; agents own web experience design
+
+## Content Status
+
+- ~36 EmailDefs, 5 decisions, 11 triggered emails, 25 fixed-date
+- Late game (Jan–Sep 2028) has no decisions — player is passive
+- `ctx.metrics` available in generators but almost unused for conditional content
+
+## Content Workflow (Milestones)
+
+- **M1**: Jörn writes .md docs with domain knowledge → agent translates to scenario code
+- **M2**: Coarse review via `npm run playthrough` — pacing, emotional beats, friction
+- **M3**: Detailed playtest via `npm run cli` (agent) or browser — catches logic/UI issues
+
 ## Scripts
 
 ```bash
