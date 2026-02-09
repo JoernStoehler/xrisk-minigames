@@ -35,7 +35,7 @@ export function Recap({ state, onRestart }: RecapProps) {
                     <span className="text-[10px] text-[#6b7280] font-mono">{d.date}</span>
                     <span className="text-[10px] text-[#4b5563] truncate">RE: {d.emailSubject}</span>
                   </div>
-                  <div className="text-sm text-[#9ca3af]">{d.chosenReplyText}</div>
+                  <div className="text-sm text-[#9ca3af]">{d.choiceText}</div>
                 </div>
               ))}
             </div>

@@ -1,3 +1,5 @@
+// === People ===
+
 export interface Person {
   id: string;
   name: string;
@@ -6,6 +8,8 @@ export interface Person {
   greeting: string;
   signoff: string;
 }
+
+// === Emails ===
 
 export interface EmailAttachment {
   label: string;
@@ -17,8 +21,11 @@ export interface ReplyOption {
   id: string;
   text: string;
   effects?: StateEffect[];
-  /** ID of modifier to trigger */
-  triggersModifier?: string;
+  /** Records a decision when chosen. Value = this reply's id. */
+  decisionId?: string;
+  /** Ends the game immediately when chosen. */
+  endsGame?: boolean;
+  endingText?: string;
 }
 
 export interface Email {
@@ -26,17 +33,14 @@ export interface Email {
   from: Person;
   subject: string;
   body: string;
-  /** Game date string, e.g. "2026-10-15" */
   date: string;
   attachments?: EmailAttachment[];
   replyOptions?: ReplyOption[];
-  /** If true, this email has been read */
+  /** Date after which reply options expire and vanish. */
+  replyExpiresOn?: string;
   read?: boolean;
-  /** Which reply was chosen */
   chosenReply?: string;
-  /** If true, player has starred this email */
   starred?: boolean;
-  /** Tags for filtering/modification by modifiers */
   tags?: string[];
 }
 
@@ -45,63 +49,67 @@ export interface StateEffect {
   delta: number;
 }
 
+// === Game state ===
+
 export interface GameMetrics {
-  aiCapability: number;       // 0-100, how capable the AI is
-  publicTrust: number;        // 0-100, public trust in OpenAI
-  boardConfidence: number;    // 0-100, board's confidence in CEO
-  oversight: number;          // 0-100, how real the safety oversight is
-  stockPrice: number;         // absolute, starts at ~150
-  revenue: number;            // quarterly revenue in billions
+  aiCapability: number;
+  publicTrust: number;
+  boardConfidence: number;
+  oversight: number;
+  stockPrice: number;
+  revenue: number;
 }
-
-export interface Modifier {
-  id: string;
-  name: string;
-  /** Description for recap screen */
-  description: string;
-  /** State conditions to be triggerable */
-  preconditions?: Partial<Record<keyof GameMetrics, { min?: number; max?: number }>>;
-  /** Direct state effects when triggered */
-  effects?: StateEffect[];
-  /** Emails to inject when triggered */
-  injectEmails?: Email[];
-  /** Email IDs to suppress */
-  suppressEmails?: string[];
-  /** Personnel replacements: old person ID -> new person */
-  replacePersonnel?: Record<string, Person>;
-  /** Does this end the game? */
-  endsGame?: boolean;
-  /** If endsGame, what's the ending description */
-  endingText?: string;
-}
-
-export type GamePhase = "playing" | "ended";
 
 export interface Decision {
+  id: string;           // decision point (e.g. "safety-anomaly")
+  choice: string;       // reply option id
+  choiceText: string;   // display text for recap
   date: string;
   emailId: string;
   emailSubject: string;
-  chosenReplyText: string;
-  modifierTriggered?: string;
 }
 
 export interface GameState {
-  /** Current game date */
   currentDate: string;
-  /** All metrics */
   metrics: GameMetrics;
-  /** Current personnel roster (can be modified by modifiers) */
-  personnel: Record<string, Person>;
-  /** All emails (inbox + spam) */
   emails: Email[];
-  /** Active modifier IDs */
-  activeModifiers: string[];
-  /** Decisions made by the player */
   decisions: Decision[];
-  /** Game phase */
-  phase: GamePhase;
-  /** Ending text if game ended */
+  phase: "playing" | "ended";
   endingText?: string;
-  /** IDs of emails suppressed by modifiers */
-  suppressedEmailIds: string[];
+}
+
+// === Narrative engine ===
+
+export interface NarrativeContext {
+  currentDate: string;
+  decisions: Decision[];
+  metrics: GameMetrics;
+}
+
+/** Returns the choice for a decision, or null if not yet made. */
+export function decided(ctx: NarrativeContext, decisionId: string): string | null {
+  const d = ctx.decisions.find((dec) => dec.id === decisionId);
+  return d ? d.choice : null;
+}
+
+/** Returns true if the player made this specific choice. */
+export function chose(ctx: NarrativeContext, decisionId: string, choice: string): boolean {
+  return decided(ctx, decisionId) === choice;
+}
+
+/** Returns the date a decision was made, or null. */
+export function decisionDate(ctx: NarrativeContext, decisionId: string): string | null {
+  const d = ctx.decisions.find((dec) => dec.id === decisionId);
+  return d ? d.date : null;
+}
+
+/** Email generator: returns an Email or null (skip delivery). */
+export type EmailGenerator = (ctx: NarrativeContext, date: string) => Email | null;
+
+/** A scheduled email in the scenario. */
+export interface EmailDef {
+  id: string;
+  /** Fixed date string, or function returning delivery date (null = not yet applicable). */
+  date: string | ((ctx: NarrativeContext) => string | null);
+  generate: EmailGenerator;
 }
