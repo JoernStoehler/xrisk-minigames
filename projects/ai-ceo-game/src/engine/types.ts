@@ -60,6 +60,13 @@ export interface GameMetrics {
   revenue: number;
 }
 
+/** Per-email UI state — the only mutable data per email. */
+export interface EmailUI {
+  read?: boolean;
+  starred?: boolean;
+  chosenReply?: string;
+}
+
 export interface Decision {
   id: string;           // decision point (e.g. "safety-anomaly")
   choice: string;       // reply option id
@@ -72,7 +79,8 @@ export interface Decision {
 export interface GameState {
   currentDate: string;
   metrics: GameMetrics;
-  emails: Email[];
+  /** Per-email UI state (read, starred, chosenReply). Email content is computed. */
+  emailUI: Record<string, EmailUI>;
   decisions: Decision[];
   phase: "playing" | "ended";
   endingText?: string;
@@ -103,13 +111,13 @@ export function decisionDate(ctx: NarrativeContext, decisionId: string): string 
   return d ? d.date : null;
 }
 
-/** Email generator: returns an Email or null (skip delivery). */
+/** Email generator: returns an Email or null (skip). */
 export type EmailGenerator = (ctx: NarrativeContext, date: string) => Email | null;
 
 /** A scheduled email in the scenario. */
 export interface EmailDef {
   id: string;
-  /** Fixed date string, or function returning delivery date (null = not yet applicable). */
+  /** Fixed date string, or function returning delivery date (null = not applicable). */
   date: string | ((ctx: NarrativeContext) => string | null);
   generate: EmailGenerator;
 }

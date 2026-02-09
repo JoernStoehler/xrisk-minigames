@@ -1,4 +1,4 @@
-import type { GameState, GameMetrics, Decision, StateEffect } from "./types";
+import type { Email, GameState, GameMetrics, Decision, StateEffect } from "./types";
 
 const INITIAL_METRICS: GameMetrics = {
   aiCapability: 35,
@@ -13,7 +13,7 @@ export function createInitialState(): GameState {
   return {
     currentDate: "2026-10-14",
     metrics: { ...INITIAL_METRICS },
-    emails: [],
+    emailUI: {},
     decisions: [],
     phase: "playing",
   };
@@ -64,23 +64,24 @@ function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
 }
 
+/** Handle a reply to a computed email. Updates emailUI, records decisions, applies effects. */
 export function handleReply(
   state: GameState,
-  emailId: string,
+  email: Email,
   replyId: string,
 ): GameState {
-  const email = state.emails.find((e) => e.id === emailId);
-  if (!email?.replyOptions) return state;
+  if (!email.replyOptions) return state;
 
   const reply = email.replyOptions.find((r) => r.id === replyId);
   if (!reply) return state;
 
-  // Mark the reply
+  // Mark the reply in emailUI
   let next: GameState = {
     ...state,
-    emails: state.emails.map((e) =>
-      e.id === emailId ? { ...e, chosenReply: replyId } : e,
-    ),
+    emailUI: {
+      ...state.emailUI,
+      [email.id]: { ...state.emailUI[email.id], chosenReply: replyId },
+    },
   };
 
   // Record decision
@@ -90,7 +91,7 @@ export function handleReply(
       choice: replyId,
       choiceText: reply.text,
       date: state.currentDate,
-      emailId,
+      emailId: email.id,
       emailSubject: email.subject,
     };
     next = { ...next, decisions: [...next.decisions, decision] };
@@ -112,9 +113,21 @@ export function handleReply(
 export function markRead(state: GameState, emailId: string): GameState {
   return {
     ...state,
-    emails: state.emails.map((e) =>
-      e.id === emailId ? { ...e, read: true } : e,
-    ),
+    emailUI: {
+      ...state.emailUI,
+      [emailId]: { ...state.emailUI[emailId], read: true },
+    },
+  };
+}
+
+export function toggleStar(state: GameState, emailId: string): GameState {
+  const current = state.emailUI[emailId];
+  return {
+    ...state,
+    emailUI: {
+      ...state.emailUI,
+      [emailId]: { ...current, starred: !current?.starred },
+    },
   };
 }
 

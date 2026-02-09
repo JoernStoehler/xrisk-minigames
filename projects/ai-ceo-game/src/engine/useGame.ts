@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
-import type { GameState, NarrativeContext } from "./types";
-import { createInitialState, advanceDay, handleReply, markRead } from "./state";
+import type { Email, GameState, NarrativeContext } from "./types";
+import { createInitialState, advanceDay, handleReply, markRead, toggleStar } from "./state";
 import { scenario } from "../data/scenario";
 
 const STORAGE_KEY = "ai-ceo-game-state";
@@ -20,7 +20,10 @@ function loadState(): GameState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as GameState;
+    const parsed = JSON.parse(raw) as GameState;
+    // Migration: reject old saves that used emails[] instead of emailUI
+    if (!parsed.emailUI) return null;
+    return parsed;
   } catch {
     return null;
   }
@@ -58,35 +61,41 @@ function resolveDate(
   return typeof def.date === "string" ? def.date : def.date(ctx);
 }
 
-/**
- * Deliver any emails from the scenario that should arrive by now.
- * Calls each generator with the current NarrativeContext.
- */
-function deliverEmails(state: GameState): GameState {
+/** Compute all visible emails from scenario generators + UI state overlay. */
+function computeEmails(state: GameState): Email[] {
   const ctx = buildContext(state);
-  const deliveredIds = new Set(state.emails.map((e) => e.id));
-  const newEmails = [];
+  const result: Email[] = [];
 
   for (const def of scenario) {
-    if (deliveredIds.has(def.id)) continue;
     const date = resolveDate(def, ctx);
     if (!date || date > state.currentDate) continue;
     const email = def.generate(ctx, date);
-    if (email) newEmails.push(email);
+    if (!email) continue;
+
+    const ui = state.emailUI[email.id];
+    const expired =
+      email.replyExpiresOn &&
+      state.currentDate > email.replyExpiresOn &&
+      !ui?.chosenReply;
+
+    result.push({
+      ...email,
+      read: ui?.read,
+      starred: ui?.starred,
+      chosenReply: ui?.chosenReply,
+      replyOptions: expired ? undefined : email.replyOptions,
+    });
   }
 
-  if (newEmails.length === 0) return state;
-  return { ...state, emails: [...state.emails, ...newEmails] };
+  return result;
 }
 
-/** Find the next date that a new email will arrive. */
+/** Find the next date that a new email would arrive. */
 function getNextEmailDate(state: GameState): string | null {
   const ctx = buildContext(state);
-  const deliveredIds = new Set(state.emails.map((e) => e.id));
   let earliest: string | null = null;
 
   for (const def of scenario) {
-    if (deliveredIds.has(def.id)) continue;
     const date = resolveDate(def, ctx);
     if (!date || date <= state.currentDate) continue;
     if (!earliest || date < earliest) earliest = date;
@@ -99,7 +108,7 @@ export function useGame() {
   const [state, setState] = useState<GameState>(() => {
     const loaded = loadState();
     if (loaded) return loaded;
-    return deliverEmails(createInitialState());
+    return createInitialState();
   });
 
   useEffect(() => {
@@ -107,7 +116,7 @@ export function useGame() {
   }, [state]);
 
   const emails = useMemo(() => {
-    return [...state.emails].sort((a, b) => b.date.localeCompare(a.date));
+    return computeEmails(state).sort((a, b) => b.date.localeCompare(a.date));
   }, [state]);
 
   const nextEmailDate = useMemo(() => getNextEmailDate(state), [state]);
@@ -128,15 +137,16 @@ export function useGame() {
         s = advanceDay(s);
       }
 
-      return deliverEmails(s);
+      return s;
     });
   }, []);
 
   const reply = useCallback((emailId: string, replyId: string) => {
     setState((prev) => {
-      const next = handleReply(prev, emailId, replyId);
-      // Deliver any emails that become available due to this decision
-      return deliverEmails(next);
+      const computed = computeEmails(prev);
+      const email = computed.find((e) => e.id === emailId);
+      if (!email) return prev;
+      return handleReply(prev, email, replyId);
     });
   }, []);
 
@@ -144,19 +154,14 @@ export function useGame() {
     setState((prev) => markRead(prev, emailId));
   }, []);
 
-  const toggleStar = useCallback((emailId: string) => {
-    setState((prev) => ({
-      ...prev,
-      emails: prev.emails.map((e) =>
-        e.id === emailId ? { ...e, starred: !e.starred } : e,
-      ),
-    }));
+  const star = useCallback((emailId: string) => {
+    setState((prev) => toggleStar(prev, emailId));
   }, []);
 
   const restart = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(UI_STORAGE_KEY);
-    setState(deliverEmails(createInitialState()));
+    setState(createInitialState());
   }, []);
 
   return {
@@ -166,7 +171,7 @@ export function useGame() {
     nextEmailDate,
     reply,
     read,
-    toggleStar,
+    toggleStar: star,
     restart,
   };
 }
