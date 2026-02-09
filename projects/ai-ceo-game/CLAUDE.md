@@ -151,6 +151,7 @@ After Decision 5, the game enters its final act (Jan–Sep 2028) with informatio
 - **M1**: Jörn writes .md docs with domain knowledge → agent translates to scenario code
 - **M2**: Coarse review via `npm run playthrough` — pacing, emotional beats, friction
 - **M3**: Detailed playtest via `npm run cli` (agent) or browser — catches logic/UI issues
+  - Prefer CLI over browser for agent playtesting: browser DOM exposes all email content at once, so agents skip clicking individual emails and miss the sequential pacing experience
 
 ## Scripts
 
