@@ -47,34 +47,31 @@ export function loadUIState(): UIState {
   }
 }
 
-function getAvailableEmails(state: GameState) {
-  const currentDate = state.currentDate;
-  return baselineEmails
-    .filter((e) => {
-      if (state.suppressedEmailIds.includes(e.id)) return false;
-      return e.date <= currentDate;
-    })
-    .map((e) => {
-      const existing = state.emails.find((se) => se.id === e.id);
-      if (existing) return existing;
-      return e;
-    });
-}
-
-function resolveInjectedEmails(state: GameState) {
-  return state.emails.filter((e) => {
-    return !baselineEmails.find((b) => b.id === e.id);
+/**
+ * Copy any baseline emails that have arrived (date <= currentDate)
+ * into state.emails, skipping suppressed and already-present ones.
+ */
+function deliverEmails(state: GameState): GameState {
+  const newEmails = baselineEmails.filter((e) => {
+    if (e.date > state.currentDate) return false;
+    if (state.suppressedEmailIds.includes(e.id)) return false;
+    if (state.emails.some((se) => se.id === e.id)) return false;
+    return true;
   });
+  if (newEmails.length === 0) return state;
+  return { ...state, emails: [...state.emails, ...newEmails] };
 }
 
 /** Find next date that has a new email arriving */
 function getNextEmailDate(state: GameState): string | null {
   const currentDate = state.currentDate;
 
+  // Future baseline emails not yet delivered
   const futureBaseline = baselineEmails
     .filter((e) => e.date > currentDate && !state.suppressedEmailIds.includes(e.id))
     .map((e) => e.date);
 
+  // Future injected emails (already in state, with resolved dates)
   const futureInjected = state.emails
     .filter((e) => e.date > currentDate && !e.date.startsWith("+"))
     .map((e) => e.date);
@@ -98,20 +95,12 @@ function resolveRelativeDates(state: GameState, baseDate: string): GameState {
   };
 }
 
-/**
- * Ensure an email exists in state.emails before modifying it.
- * Baseline emails only live in the static array until first interaction.
- */
-function ensureInState(state: GameState, emailId: string): GameState {
-  if (state.emails.some((e) => e.id === emailId)) return state;
-  const baseline = baselineEmails.find((e) => e.id === emailId);
-  if (!baseline) return state;
-  return { ...state, emails: [...state.emails, baseline] };
-}
-
 export function useGame() {
   const [state, setState] = useState<GameState>(() => {
-    return loadState() ?? createInitialState();
+    const loaded = loadState();
+    if (loaded) return loaded;
+    // Deliver day-1 emails on fresh start
+    return deliverEmails(createInitialState());
   });
 
   // Persist on every change
@@ -119,18 +108,11 @@ export function useGame() {
     saveState(state);
   }, [state]);
 
+  // Emails sorted newest-first, derived from state
   const emails = useMemo(() => {
-    const baseline = getAvailableEmails(state);
-    const injected = resolveInjectedEmails(state);
-
-    const combined = [...baseline, ...injected];
-    const seen = new Set<string>();
-    const unique = combined.filter((e) => {
-      if (seen.has(e.id)) return false;
-      seen.add(e.id);
-      return true;
-    });
-    return unique.sort((a, b) => b.date.localeCompare(a.date));
+    return [...state.emails]
+      .filter((e) => !e.date.startsWith("+")) // hide unresolved future emails
+      .sort((a, b) => b.date.localeCompare(a.date));
   }, [state]);
 
   const nextEmailDate = useMemo(() => getNextEmailDate(state), [state]);
@@ -156,38 +138,38 @@ export function useGame() {
         s = advanceDay(s);
       }
 
+      // Deliver newly arrived emails & resolve relative dates
+      s = deliverEmails(s);
       return resolveRelativeDates(s, prev.currentDate);
     });
   }, []);
 
   const reply = useCallback((emailId: string, replyId: string) => {
     setState((prev) => {
-      const withEmail = ensureInState(prev, emailId);
-      const next = handleReply(withEmail, emailId, replyId);
-      return resolveRelativeDates(next, prev.currentDate);
+      const next = handleReply(prev, emailId, replyId);
+      // Deliver any emails that modifiers may have injected for today
+      const delivered = deliverEmails(next);
+      return resolveRelativeDates(delivered, prev.currentDate);
     });
   }, []);
 
   const read = useCallback((emailId: string) => {
-    setState((prev) => markRead(ensureInState(prev, emailId), emailId));
+    setState((prev) => markRead(prev, emailId));
   }, []);
 
   const toggleStar = useCallback((emailId: string) => {
-    setState((prev) => {
-      const s = ensureInState(prev, emailId);
-      return {
-        ...s,
-        emails: s.emails.map((e) =>
-          e.id === emailId ? { ...e, starred: !e.starred } : e,
-        ),
-      };
-    });
+    setState((prev) => ({
+      ...prev,
+      emails: prev.emails.map((e) =>
+        e.id === emailId ? { ...e, starred: !e.starred } : e,
+      ),
+    }));
   }, []);
 
   const restart = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(UI_STORAGE_KEY);
-    setState(createInitialState());
+    setState(deliverEmails(createInitialState()));
   }, []);
 
   return {
