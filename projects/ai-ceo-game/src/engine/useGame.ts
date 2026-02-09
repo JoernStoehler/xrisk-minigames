@@ -98,6 +98,17 @@ function resolveRelativeDates(state: GameState, baseDate: string): GameState {
   };
 }
 
+/**
+ * Ensure an email exists in state.emails before modifying it.
+ * Baseline emails only live in the static array until first interaction.
+ */
+function ensureInState(state: GameState, emailId: string): GameState {
+  if (state.emails.some((e) => e.id === emailId)) return state;
+  const baseline = baselineEmails.find((e) => e.id === emailId);
+  if (!baseline) return state;
+  return { ...state, emails: [...state.emails, baseline] };
+}
+
 export function useGame() {
   const [state, setState] = useState<GameState>(() => {
     return loadState() ?? createInitialState();
@@ -151,22 +162,26 @@ export function useGame() {
 
   const reply = useCallback((emailId: string, replyId: string) => {
     setState((prev) => {
-      const next = handleReply(prev, emailId, replyId);
+      const withEmail = ensureInState(prev, emailId);
+      const next = handleReply(withEmail, emailId, replyId);
       return resolveRelativeDates(next, prev.currentDate);
     });
   }, []);
 
   const read = useCallback((emailId: string) => {
-    setState((prev) => markRead(prev, emailId));
+    setState((prev) => markRead(ensureInState(prev, emailId), emailId));
   }, []);
 
   const toggleStar = useCallback((emailId: string) => {
-    setState((prev) => ({
-      ...prev,
-      emails: prev.emails.map((e) =>
-        e.id === emailId ? { ...e, starred: !e.starred } : e,
-      ),
-    }));
+    setState((prev) => {
+      const s = ensureInState(prev, emailId);
+      return {
+        ...s,
+        emails: s.emails.map((e) =>
+          e.id === emailId ? { ...e, starred: !e.starred } : e,
+        ),
+      };
+    });
   }, []);
 
   const restart = useCallback(() => {

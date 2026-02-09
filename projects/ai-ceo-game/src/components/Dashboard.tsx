@@ -141,6 +141,7 @@ export function Dashboard({
             <Inbox
               emails={emails}
               onSelect={handleSelectEmail}
+              onToggleStar={onToggleStar}
             />
           )}
         </main>
