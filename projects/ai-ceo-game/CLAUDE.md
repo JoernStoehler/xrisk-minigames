@@ -126,9 +126,15 @@ Decision 5: Safety Evals Broken (Nov 2027)
 
 After Decision 5, the game enters its final act (Jan–Sep 2028) with informational emails showing the system running itself. All paths converge to extinction.
 
-## Verification
+## Scripts
 
 ```bash
-npm run check   # typecheck + lint + build + test
-npm run dev     # dev server at http://localhost:5173
+npm run check              # typecheck + lint + build + test
+npm run dev                # dev server at http://localhost:5173
+
+# Content review & playtesting (scripts/ directory)
+npm run playthrough        # generate full playthroughs as markdown (3 strategies)
+npm run scenario:reference # annotated email list with fill-in slots for expert review
+npm run cli [command]      # stateful CLI: reset | status | next | reply <id> | inbox | read <id>
+npm run play               # interactive terminal player (ANSI colors, readline)
 ```

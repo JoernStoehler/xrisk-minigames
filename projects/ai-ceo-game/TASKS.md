@@ -3,10 +3,29 @@
 ## Current
 - [ ] Reply expiry UX (show expired state, auto-resolve defaults)
 - [ ] Mobile polish pass
-- [ ] Code cleanup pass (document for future agents)
 - [ ] Further content: more decision branches, late-game consequences, additional filler
+  - Late game (Jan–Sep 2028) has zero decisions — player just clicks >> to death
+  - Metrics don't trigger anything — no "if oversight < 20" conditional emails
+  - Context-aware body text (`ctx.metrics`) is available but underused
+
+## Upcoming Milestones
+- **M1:** Jörn writes/co-authors .md files with domain knowledge, background, and content patches
+  - Use `npm run scenario:reference` as starting point for annotation
+- **M2:** Coarse playthrough review — pacing, emotional beats, friction
+  - Use `npm run playthrough > playthrough.md` to read all paths as prose
+- **M3:** Detailed playtesting via CLI or browser
+  - Use `npm run cli` for agent-driven turn-by-turn play
+  - Use `npm run play` for interactive terminal play
 
 ## Done
+- [x] **Tooling for content workflow**
+  - `npm run playthrough` — generates 3 full playthroughs as markdown
+  - `npm run scenario:reference` — annotated email list with fill-in slots
+  - `npm run cli` — stateful CLI for agent playtesting (reset/next/reply/inbox/read)
+  - `npm run play` — interactive terminal player
+- [x] **Documentation overhaul for future agents**
+  - CLAUDE.md rewritten with architecture reference, file tables, decision map
+  - Doccomments added to types.ts, state.ts, useGame.ts, scenario.ts
 - [x] **Content expansion: 5 decisions, ~30 emails, rich branching**
   - Decision 4: GPT-7 architecture (green-light vs human review, with follow-ups)
   - Decision 5: Safety evals broken (disclose vs quiet fix, with consequences)
