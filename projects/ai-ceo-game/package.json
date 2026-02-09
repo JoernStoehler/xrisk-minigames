@@ -14,7 +14,10 @@
     "test:e2e": "playwright test",
     "check": "npm run typecheck && npm run lint && npm run build && npm test",
     "setup:ccweb": "npx playwright install --with-deps chromium 2>/dev/null; npm install",
-    "playthrough": "tsx scripts/playthrough.ts"
+    "playthrough": "tsx scripts/playthrough.ts",
+    "scenario:reference": "tsx scripts/scenario-reference.ts",
+    "play": "tsx scripts/play.ts",
+    "cli": "tsx scripts/cli.ts"
   },
   "dependencies": {
     "react": "^19.2.0",
