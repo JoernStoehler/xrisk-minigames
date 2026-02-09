@@ -152,6 +152,7 @@ CC Web has restricted network access and pre-installed tooling. Docs: https://co
 - **Playwright pinned to v1.56.1** — do not upgrade
 - **No external URLs from browsers** — `ERR_TUNNEL_CONNECTION_FAILED`; test deployments from your own browser
 - **First run in a project:** `npm run setup:ccweb` (installs Playwright browsers + npm deps)
+- **Auto-memory doesn't persist across VMs** — files in `/root/.claude/projects/*/memory/` are lost when the VM is recycled. Put cross-session knowledge in checked-in files (`CLAUDE.md`, `TASKS.md`), not auto-memory.
 
 ---
 
