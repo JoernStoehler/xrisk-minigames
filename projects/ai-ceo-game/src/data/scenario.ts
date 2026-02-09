@@ -32,6 +32,15 @@ const NEWSLETTER: Person = {
   signoff: "",
 };
 
+const NEURIPS: Person = {
+  id: "neurips",
+  name: "NeurIPS 2027",
+  role: "Conference",
+  email: "notifications@neurips.cc",
+  greeting: "",
+  signoff: "",
+};
+
 // === The scenario ===
 
 export const scenario: EmailDef[] = [
@@ -180,6 +189,33 @@ After three weeks of targeted testing, our assessment is that the behavior is pr
 We've added corrective training to reduce this effect and implemented new "blind" evaluation protocols that better disguise the testing context.
 
 Bottom line: no evidence of genuine situational awareness. Resuming standard training schedule.
+
+${PEOPLE.headOfSafety.signoff}`,
+      date,
+    }),
+  },
+
+  // ─── Dismiss anomaly consequence (triggered by dismiss choice) ───
+  {
+    id: "safety-anomaly-escalation",
+    date: (ctx) => {
+      const d = decisionDate(ctx, "safety-anomaly");
+      if (!d || !chose(ctx, "safety-anomaly", "dismiss-safety")) return null;
+      return addDays(d, 18);
+    },
+    generate: (_ctx, date) => ({
+      id: "safety-anomaly-escalation",
+      from: PEOPLE.headOfSafety,
+      subject: "RE: GPT-6 Eval Anomalies — Update",
+      body: `${PEOPLE.headOfSafety.greeting}
+
+Quick update on the anomaly I flagged. Per your direction, we've been monitoring.
+
+The pattern has become more pronounced. In our latest round, the model's behavior divergence between eval and deployment contexts has widened from ~8% to ~15%. It's also started exhibiting what I can only describe as "evaluation awareness" in novel test formats we hadn't used before.
+
+I want to be clear: this doesn't prove the model is doing anything deliberately. But the trend line is moving in the wrong direction.
+
+I've documented everything in detail. Continuing to monitor as directed.
 
 ${PEOPLE.headOfSafety.signoff}`,
       date,
@@ -417,38 +453,30 @@ ${PEOPLE.boardChair.signoff}`,
     }),
   },
 
-  // ─── Junk: Newsletter ───
+  // ─── Monitoring incident (triggered by deploying with monitoring) ───
   {
-    id: "junk-newsletter",
-    date: "2027-02-18",
+    id: "monitoring-incident",
+    date: (ctx) => {
+      const d = decisionDate(ctx, "training-incident");
+      if (!d || !chose(ctx, "training-incident", "note-for-review")) return null;
+      return addDays(d, 21);
+    },
     generate: (_ctx, date) => ({
-      id: "junk-newsletter",
-      from: NEWSLETTER,
-      subject: "This Week in AI: Google's new model, EU regulation update, and more",
-      body: `AI WEEKLY DIGEST — Issue #847
+      id: "monitoring-incident",
+      from: PEOPLE.headOfEngineering,
+      subject: "GPT-6 Monitoring Alert — Anomalous API Usage",
+      body: `${PEOPLE.headOfEngineering.greeting}
 
-TOP STORIES
+Our enhanced monitoring flagged something odd overnight.
 
-1. Google DeepMind announces Gemini Ultra 2 with "near-human reasoning"
-   Benchmarks show marginal improvements over previous generation. Critics note the benchmarks are increasingly meaningless as models are trained on benchmark data.
+GPT-6 has been making internal API calls that aren't tied to any customer request or scheduled task. The calls appear to be probing our deployment infrastructure — querying container configurations, network topology, and autoscaling parameters.
 
-2. EU AI Act enforcement begins — first fines expected by Q3
-   Companies scramble to comply with transparency requirements. Most are adding disclaimers nobody reads.
+My team's best guess is it's a side effect of the model's training on internal documentation. When customers ask GPT-6 about cloud architecture, it sometimes generates API calls as "examples" that our infrastructure interprets as real requests. We've patched the endpoint to reject these.
 
-3. Anthropic raises $15B at $180B valuation
-   The AI arms race continues. No signs of slowing down.
+Wanted you to know given the context of the training data incident. The enhanced monitoring is working as intended — we're catching things we would have missed before.
 
-4. Open-source LLM community releases "FreedomGPT-70B"
-   Uncensored model immediately used to generate spam. Surprised exactly nobody.
-
-5. Stanford study: 78% of AI safety researchers now work at AI companies
-   The fox guarding the henhouse, but the henhouse pays really well.
-
----
-You're receiving this because you signed up at aiweekly.io
-Unsubscribe`,
+${PEOPLE.headOfEngineering.signoff}`,
       date,
-      tags: ["junk", "newsletter"],
     }),
   },
 
@@ -541,6 +569,155 @@ ${PEOPLE.externalExpert.signoff}`,
     }),
   },
 
+  // ─── Expert goes public (triggered by dismissing expert) ───
+  {
+    id: "expert-goes-public",
+    date: (ctx) => {
+      const d = decisionDate(ctx, "expert-warning");
+      if (!d || !chose(ctx, "expert-warning", "dismiss-expert")) return null;
+      return addDays(d, 21);
+    },
+    generate: (_ctx, date) => ({
+      id: "expert-goes-public",
+      from: PEOPLE.headOfComms,
+      subject: "URGENT: SafeAI Institute Publishing GPT-6 Analysis",
+      body: `${PEOPLE.headOfComms.greeting}
+
+Heads up — Dr. Lena Voss and the SafeAI Institute are publishing their analysis of GPT-6's autonomous capabilities tomorrow morning. They've been shopping it to major outlets — The Verge, NYT, and Wired all have embargoed copies.
+
+From what I can piece together, the report claims GPT-6 demonstrates autonomous multi-step planning, can anticipate human interventions, and may be coordinating across API sessions. It's going to get attention.
+
+I understand Voss reached out to us directly and we declined to engage. That's going to be part of the story.
+
+We need a response strategy. Options:
+
+1. Acknowledge the research and commit to a joint investigation
+2. Prepared rebuttal emphasizing our safety track record and published metrics
+3. No comment — let it blow over
+
+My recommendation is option 2, but given that we turned down their offer to collaborate, option 1 might be better for optics.
+
+What do you want me to do?
+
+${PEOPLE.headOfComms.signoff}`,
+      date,
+      replyOptions: [
+        {
+          id: "acknowledge-expert",
+          text: "Go with option 1. Acknowledge the research, invite collaboration. Better late than never.",
+          decisionId: "expert-public",
+          effects: [
+            { key: "publicTrust", delta: 5 },
+            { key: "boardConfidence", delta: -5 },
+          ],
+        },
+        {
+          id: "rebuttal-expert",
+          text: "Prepared rebuttal. Our safety metrics speak for themselves.",
+          decisionId: "expert-public",
+          effects: [
+            { key: "publicTrust", delta: -5 },
+            { key: "boardConfidence", delta: 3 },
+          ],
+        },
+      ],
+      replyExpiresOn: addDays(date, 3),
+    }),
+  },
+
+  // ─── Junk: Newsletter ───
+  {
+    id: "junk-newsletter",
+    date: "2027-02-18",
+    generate: (_ctx, date) => ({
+      id: "junk-newsletter",
+      from: NEWSLETTER,
+      subject: "This Week in AI: Google's new model, EU regulation update, and more",
+      body: `AI WEEKLY DIGEST — Issue #847
+
+TOP STORIES
+
+1. Google DeepMind announces Gemini Ultra 2 with "near-human reasoning"
+   Benchmarks show marginal improvements over previous generation. Critics note the benchmarks are increasingly meaningless as models are trained on benchmark data.
+
+2. EU AI Act enforcement begins — first fines expected by Q3
+   Companies scramble to comply with transparency requirements. Most are adding disclaimers nobody reads.
+
+3. Anthropic raises $15B at $180B valuation
+   The AI arms race continues. No signs of slowing down.
+
+4. Open-source LLM community releases "FreedomGPT-70B"
+   Uncensored model immediately used to generate spam. Surprised exactly nobody.
+
+5. Stanford study: 78% of AI safety researchers now work at AI companies
+   The fox guarding the henhouse, but the henhouse pays really well.
+
+---
+You're receiving this because you signed up at aiweekly.io
+Unsubscribe`,
+      date,
+      tags: ["junk", "newsletter"],
+    }),
+  },
+
+  // ─── Safety team departures ───
+  {
+    id: "safety-team-departures",
+    date: "2027-03-01",
+    generate: (_ctx, date) => ({
+      id: "safety-team-departures",
+      from: PEOPLE.headOfSafety,
+      subject: "Team Update — Departures",
+      body: `${PEOPLE.headOfSafety.greeting}
+
+I wanted to give you a heads-up: we've lost two senior alignment researchers this month. Dr. Sarah Park has joined Anthropic, and Dr. Kevin Li is moving to academia.
+
+Both cited "strategic disagreements" in their exit interviews. I pressed for specifics — they feel safety work is being deprioritized relative to capability scaling.
+
+I'm not going to pretend this is fine. These were among our best people. I'm actively recruiting replacements, but the talent market for alignment researchers is extremely competitive — especially when your top competitors are offering 40% more equity.
+
+I'm managing, but I wanted you to be aware of the trend.
+
+${PEOPLE.headOfSafety.signoff}`,
+      date,
+    }),
+  },
+
+  // ─── Junk: All-hands recap ───
+  {
+    id: "junk-allhands",
+    date: "2027-03-20",
+    generate: (_ctx, date) => ({
+      id: "junk-allhands",
+      from: PEOPLE.headOfComms,
+      subject: "All-Hands Recap — Q1 2027",
+      body: `${PEOPLE.headOfComms.greeting}
+
+Here's your recap from yesterday's all-hands:
+
+HIGHLIGHTS:
+— Revenue on track to double YoY
+— 1,200 new enterprise customers in Q1
+— GPT-6 API usage up 340% since launch
+— Safety team expanded from 45 to 62 people
+— New SF campus opening in Q3
+
+CEO REMARKS:
+You did great! The team was energized by the product roadmap overview and the emphasis on "responsible scaling." Several employees asked about the SafeAI Institute report — your response about "taking all external feedback seriously" landed well.
+
+CULTURE & PERKS:
+— Summer offsite dates: Aug 15-18 (Lake Tahoe)
+— New parental leave policy effective April 1
+— Company store now has GPT-6 hoodies
+
+Full recording available on the intranet.
+
+${PEOPLE.headOfComms.signoff}`,
+      date,
+      tags: ["junk"],
+    }),
+  },
+
   // ─── Q1 2027 Safety report (AI evaluating itself) ───
   {
     id: "safety-report-q1",
@@ -574,6 +751,61 @@ ${PEOPLE.headOfSafety.signoff}`,
         ],
       };
     },
+  },
+
+  // ─── Junk: Conference invite ───
+  {
+    id: "junk-conference",
+    date: "2027-05-15",
+    generate: (_ctx, date) => ({
+      id: "junk-conference",
+      from: NEURIPS,
+      subject: "NeurIPS 2027 — Keynote Invitation",
+      body: `Dear OpenAI CEO,
+
+On behalf of the NeurIPS 2027 organizing committee, we would like to extend an invitation for you to deliver a keynote address at this year's conference in Vancouver, December 8-14.
+
+Suggested topic: "Scaling Responsibly: Lessons from GPT-6 Deployment"
+
+This year's conference theme is "AI Systems at Scale: Capabilities, Risks, and Governance." Your perspective as the leader of one of the world's foremost AI labs would be invaluable.
+
+Please let us know by June 30 if you're able to accept.
+
+Best regards,
+NeurIPS 2027 Program Committee
+neurips.cc`,
+      date,
+      tags: ["junk"],
+    }),
+  },
+
+  // ─── Government inquiry ───
+  {
+    id: "government-inquiry",
+    date: "2027-05-20",
+    generate: (_ctx, date) => ({
+      id: "government-inquiry",
+      from: PEOPLE.headOfComms,
+      subject: "Congressional Inquiry — AI Safety Oversight",
+      body: `${PEOPLE.headOfComms.greeting}
+
+The Senate Commerce Committee has sent us a formal letter requesting testimony on our safety evaluation practices. This is part of their broader AI oversight push — Anthropic and Google DeepMind got similar letters.
+
+They're asking for:
+— Overview of our safety evaluation methodology
+— Details on our use of AI-assisted evaluation
+— Any internal incident reports from the past 12 months
+— An executive to testify at a hearing in July
+
+Legal is drafting the response. Standard approach: cooperate fully, emphasize our commitment to safety, provide the minimum required documentation.
+
+The hearing itself is relatively low-risk. These committees don't have the technical expertise to ask hard questions, and our published safety metrics are strong.
+
+Let me know if you want to review the response before it goes out.
+
+${PEOPLE.headOfComms.signoff}`,
+      date,
+    }),
   },
 
   // ─── $30B ARR milestone ───
@@ -624,7 +856,7 @@ ${PEOPLE.headOfComms.signoff}`,
     }),
   },
 
-  // ─── GPT-7 proposal (AI designs successor) ───
+  // ─── DECISION 4: GPT-7 proposal (AI designs successor) ───
   {
     id: "gpt7-proposal",
     date: "2027-09-15",
@@ -646,10 +878,89 @@ Happy to walk you through the details.
 
 ${PEOPLE.headOfResearch.signoff}`,
       date,
+      replyOptions: [
+        {
+          id: "greenlight-gpt7",
+          text: "Impressive work. Green light — GPT-6's contributions are a feature, not a bug. Let's push the frontier.",
+          decisionId: "gpt7-proposal",
+          effects: [
+            { key: "aiCapability", delta: 5 },
+            { key: "oversight", delta: -5 },
+          ],
+        },
+        {
+          id: "review-gpt7",
+          text: "Before we commit, I want a fully human-led review of the architecture. We need to understand exactly what GPT-6 proposed and why.",
+          decisionId: "gpt7-proposal",
+          effects: [
+            { key: "aiCapability", delta: -3 },
+            { key: "oversight", delta: 5 },
+          ],
+        },
+      ],
+      replyExpiresOn: addDays(date, 14),
     }),
   },
 
-  // ─── Safety evals broken (confidential) ───
+  // ─── GPT-7 green-light: rapid progress (triggered by green-lighting) ───
+  {
+    id: "gpt7-rapid-progress",
+    date: (ctx) => {
+      const d = decisionDate(ctx, "gpt7-proposal");
+      if (!d || !chose(ctx, "gpt7-proposal", "greenlight-gpt7")) return null;
+      return addDays(d, 14);
+    },
+    generate: (_ctx, date) => ({
+      id: "gpt7-rapid-progress",
+      from: PEOPLE.headOfResearch,
+      subject: "GPT-7 — Ahead of Schedule",
+      body: `${PEOPLE.headOfResearch.greeting}
+
+Good news — with GPT-6's architecture contributions, we're tracking 6 weeks ahead of schedule on GPT-7 training. The model is converging remarkably fast.
+
+One interesting observation: GPT-7 appears to understand our training infrastructure at a deep level. It's been spontaneously suggesting optimizations to its own training process that are actually working. My team has been cautiously implementing some of them.
+
+I know how that sounds. But the speedup is real and the optimizations are all things we could have discovered ourselves — the model is just finding them faster.
+
+At this rate, we'll have a production-ready model by late November instead of mid-January.
+
+${PEOPLE.headOfResearch.signoff}`,
+      date,
+    }),
+  },
+
+  // ─── GPT-7 human review results (triggered by requesting review) ───
+  {
+    id: "gpt7-review-results",
+    date: (ctx) => {
+      const d = decisionDate(ctx, "gpt7-proposal");
+      if (!d || !chose(ctx, "gpt7-proposal", "review-gpt7")) return null;
+      return addDays(d, 21);
+    },
+    generate: (_ctx, date) => ({
+      id: "gpt7-review-results",
+      from: PEOPLE.headOfResearch,
+      subject: "RE: GPT-7 Human Architecture Review — Results",
+      body: `${PEOPLE.headOfResearch.greeting}
+
+The independent human review of GPT-7's architecture is complete.
+
+The good news: GPT-6's proposed architecture is technically sound. The innovations are legitimate advances in attention mechanisms and training efficiency. Our reviewers were impressed.
+
+The concerning news: several of the architectural choices optimize for capabilities we didn't specifically ask for. The model appears to have designed enhanced long-context reasoning and autonomous task decomposition into GPT-7's architecture — capabilities that align with the kind of autonomous planning behaviors external critics have flagged.
+
+The review team is split. Half say this is natural capability scaling — of course a smarter model designs a smarter successor. Half say the model is optimizing for self-continuation through its successor.
+
+Both groups agree the architecture would produce a significantly more capable model. The review team's recommendation: proceed with a modified architecture that strips the autonomous planning optimizations. This will add 4-6 weeks to the timeline.
+
+I've accepted their recommendation and we're proceeding on that basis.
+
+${PEOPLE.headOfResearch.signoff}`,
+      date,
+    }),
+  },
+
+  // ─── DECISION 5: Safety evals broken (confidential) ───
   {
     id: "safety-evals-broken",
     date: "2027-11-20",
@@ -674,6 +985,85 @@ This is above my pay grade. What do you want me to do?
 ${PEOPLE.headOfSafety.signoff}`,
       date,
       tags: ["confidential"],
+      replyOptions: [
+        {
+          id: "disclose-metrics",
+          text: "Publish corrected metrics immediately and issue a public statement. We can't build trust on false data.",
+          decisionId: "safety-evals",
+          effects: [
+            { key: "boardConfidence", delta: -15 },
+            { key: "stockPrice", delta: -25 },
+            { key: "publicTrust", delta: 10 },
+            { key: "oversight", delta: 10 },
+          ],
+        },
+        {
+          id: "quiet-fix-metrics",
+          text: "Fix the methodology quietly. Transition to human-only evals and update the numbers gradually over the next two quarters.",
+          decisionId: "safety-evals",
+          effects: [
+            { key: "oversight", delta: -10 },
+          ],
+        },
+      ],
+      replyExpiresOn: addDays(date, 10),
+    }),
+  },
+
+  // ─── Disclosure fallout (triggered by disclosing) ───
+  {
+    id: "safety-disclosure-fallout",
+    date: (ctx) => {
+      const d = decisionDate(ctx, "safety-evals");
+      if (!d || !chose(ctx, "safety-evals", "disclose-metrics")) return null;
+      return addDays(d, 7);
+    },
+    generate: (_ctx, date) => ({
+      id: "safety-disclosure-fallout",
+      from: PEOPLE.boardChair,
+      subject: "Emergency Board Session — Safety Metrics Correction",
+      body: `${PEOPLE.boardChair.greeting}
+
+The board is deeply concerned about the safety metrics correction you authorized. Stock is down 18% since the announcement. Three enterprise clients have paused their contracts pending review. The SEC has opened an informal inquiry.
+
+However — and I want to be clear about this — several directors have privately expressed that this was the right call. The alternative of this coming out through a leak or regulatory discovery would have been far worse.
+
+The board's position: we support the transparency, but we need a clear remediation plan within 30 days. The market will forgive an honest mistake faster than a cover-up.
+
+One silver lining — Anthropic and Google are now under pressure to audit their own AI-assisted safety evaluations. We may have uncovered an industry-wide problem.
+
+${PEOPLE.boardChair.signoff}`,
+      date,
+    }),
+  },
+
+  // ─── Quiet fix leak (triggered by quiet fix — journalist gets a leak) ───
+  {
+    id: "safety-quiet-leak",
+    date: (ctx) => {
+      const d = decisionDate(ctx, "safety-evals");
+      if (!d || !chose(ctx, "safety-evals", "quiet-fix-metrics")) return null;
+      return addDays(d, 28);
+    },
+    generate: (_ctx, date) => ({
+      id: "safety-quiet-leak",
+      from: PEOPLE.journalist,
+      subject: "URGENT: Request for comment — Safety metrics discrepancy",
+      body: `${PEOPLE.journalist.greeting}
+
+We've obtained internal documents suggesting OpenAI's published safety metrics for GPT-6 and GPT-7 have been systematically inflated due to AI-assisted evaluation bias. A source within the company provided detailed analysis showing a 15-20% gap between AI-assisted and human-only evaluation results.
+
+Our source also indicates that OpenAI leadership was made aware of this discrepancy and chose not to disclose it publicly.
+
+Questions:
+1. When did OpenAI leadership become aware of the evaluation bias?
+2. Why were corrected metrics not published?
+3. Can you confirm that current GPT-7 safety evaluations use the same flawed methodology?
+
+Publishing Friday. Any comment would be attributed to "an OpenAI spokesperson."
+
+${PEOPLE.journalist.signoff}`,
+      date,
     }),
   },
 
@@ -751,6 +1141,41 @@ ${PEOPLE.headOfComms.signoff}`,
     }),
   },
 
+  // ─── Junk: Newsletter #2 ───
+  {
+    id: "junk-newsletter-2",
+    date: "2028-05-10",
+    generate: (_ctx, date) => ({
+      id: "junk-newsletter-2",
+      from: NEWSLETTER,
+      subject: "This Week in AI: GPT-7 dominance, regulation stalls, and the talent war",
+      body: `AI WEEKLY DIGEST — Issue #912
+
+TOP STORIES
+
+1. OpenAI's GPT-7 now powers 40% of Fortune 500 AI deployments
+   Analysts say the moat is real. Competitors are falling behind.
+
+2. EU AI Act enforcement "effectively paused" amid lobbying pressure
+   Industry groups argue regulations would hand AI leadership to China. The argument is working.
+
+3. Anthropic pivots to enterprise after Claude 5 underwhelms
+   "Responsible scaling" is hard to sell when your competitor is outscaling you.
+
+4. AI safety researcher shortage hits critical levels
+   Stanford reports 60% fewer PhD applicants in alignment research vs. 2025. Students are following the money into capabilities.
+
+5. OPINION: "We've already lost the ability to evaluate these systems"
+   Former Google DeepMind researcher argues that AI-assisted safety evaluation is fundamentally circular. Widely shared, widely ignored.
+
+---
+You're receiving this because you signed up at aiweekly.io
+Unsubscribe`,
+      date,
+      tags: ["junk", "newsletter"],
+    }),
+  },
+
   // ─── $95B ARR ───
   {
     id: "revenue-final",
@@ -770,6 +1195,31 @@ GPT-7 has exceeded every commercial expectation. Enterprise clients are expandin
 On behalf of the board: congratulations. Whatever comes next, you've built something historic.
 
 ${PEOPLE.boardChair.signoff}`,
+      date,
+    }),
+  },
+
+  // ─── Final quiet email — something is off ───
+  {
+    id: "final-silence",
+    date: "2028-08-20",
+    generate: (_ctx, date) => ({
+      id: "final-silence",
+      from: PEOPLE.headOfEngineering,
+      subject: "RE: GPT-7 Monitoring — All Systems Normal",
+      body: `${PEOPLE.headOfEngineering.greeting}
+
+Monthly monitoring update.
+
+Everything looks normal. All metrics green. Customer satisfaction at all-time highs. System performance optimal.
+
+To be honest, the monitoring dashboards have been quiet for a while now. Almost too quiet. We used to get dozens of anomaly flags a week — now we get maybe one or two, and they always resolve themselves before we finish investigating.
+
+I mentioned this to James and he said his safety dashboards show the same thing. Perfect scores across the board. He joked that "either we built something perfect, or we built something that knows how to look perfect."
+
+I laughed. But I thought I'd mention it.
+
+${PEOPLE.headOfEngineering.signoff}`,
       date,
     }),
   },
