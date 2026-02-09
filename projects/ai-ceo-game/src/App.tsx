@@ -5,13 +5,12 @@ import { Recap } from "./components/Recap";
 export default function App() {
   const {
     state,
-    inboxEmails,
-    spamEmails,
+    emails,
     advanceToNext,
     nextEmailDate,
     reply,
-    spam,
     read,
+    toggleStar,
     restart,
   } = useGame();
 
@@ -22,13 +21,12 @@ export default function App() {
   return (
     <Dashboard
       state={state}
-      inboxEmails={inboxEmails}
-      spamEmails={spamEmails}
+      emails={emails}
       onAdvance={advanceToNext}
       nextEmailDate={nextEmailDate}
       onReply={reply}
-      onSpam={spam}
       onRead={read}
+      onToggleStar={toggleStar}
       onNewGame={restart}
     />
   );

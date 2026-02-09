@@ -157,15 +157,6 @@ export function resolvePersonnel(state: GameState, person: Person): Person {
   return state.personnel[person.id] ?? person;
 }
 
-export function spamEmail(state: GameState, emailId: string): GameState {
-  return {
-    ...state,
-    emails: state.emails.map((e) =>
-      e.id === emailId ? { ...e, spammed: true } : e,
-    ),
-  };
-}
-
 export function markRead(state: GameState, emailId: string): GameState {
   return {
     ...state,

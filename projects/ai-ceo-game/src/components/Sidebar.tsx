@@ -2,59 +2,32 @@ import type { GameMetrics } from "../engine/types";
 
 interface SidebarProps {
   metrics: GameMetrics;
-  showSpam: boolean;
-  onToggleSpam: () => void;
-  inboxCount: number;
+  emailCount: number;
   unreadCount: number;
-  spamCount: number;
   onNewGame: () => void;
   onShowDisclaimer: () => void;
 }
 
 export function Sidebar({
   metrics,
-  showSpam,
-  onToggleSpam,
-  inboxCount,
+  emailCount,
   unreadCount,
-  spamCount,
   onNewGame,
   onShowDisclaimer,
 }: SidebarProps) {
   return (
     <div className="h-full flex flex-col p-3 gap-5 overflow-y-auto">
-      {/* Folders */}
-      <nav className="space-y-0.5">
-        <button
-          onClick={() => showSpam && onToggleSpam()}
-          className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[13px] transition-colors ${
-            !showSpam
-              ? "bg-[#ececf1] text-[#0d0d0d] font-medium"
-              : "text-[#6e6e80] hover:bg-[#ececf1]/50"
-          }`}
-        >
-          <span>Inbox</span>
-          {unreadCount > 0 && (
-            <span className="text-[11px] bg-[#0d0d0d] text-white w-5 h-5 flex items-center justify-center rounded-full font-medium">
-              {unreadCount}
-            </span>
-          )}
-          {unreadCount === 0 && (
-            <span className="text-[11px] text-[#8e8ea0]">{inboxCount}</span>
-          )}
-        </button>
-        <button
-          onClick={() => !showSpam && onToggleSpam()}
-          className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[13px] transition-colors ${
-            showSpam
-              ? "bg-[#ececf1] text-[#0d0d0d] font-medium"
-              : "text-[#6e6e80] hover:bg-[#ececf1]/50"
-          }`}
-        >
-          <span>Spam</span>
-          <span className="text-[11px] text-[#8e8ea0]">{spamCount}</span>
-        </button>
-      </nav>
+      {/* Inbox count */}
+      <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#ececf1] text-[#0d0d0d] text-[13px] font-medium">
+        <span>Inbox</span>
+        {unreadCount > 0 ? (
+          <span className="text-[11px] bg-[#0d0d0d] text-white w-5 h-5 flex items-center justify-center rounded-full font-medium">
+            {unreadCount}
+          </span>
+        ) : (
+          <span className="text-[11px] text-[#8e8ea0]">{emailCount}</span>
+        )}
+      </div>
 
       <div className="h-px bg-[#ececf1]" />
 

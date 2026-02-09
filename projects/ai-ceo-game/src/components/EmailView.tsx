@@ -5,11 +5,18 @@ interface EmailViewProps {
   email: Email;
   onBack: () => void;
   onReply: (emailId: string, replyId: string) => void;
-  onSpam: (emailId: string) => void;
-  isSpam: boolean;
+  onToggleStar: (emailId: string) => void;
 }
 
-export function EmailView({ email, onBack, onReply, onSpam, isSpam }: EmailViewProps) {
+export function EmailView({ email, onBack, onReply, onToggleStar }: EmailViewProps) {
+  const emailDate = new Date(email.date + "T12:00:00");
+  const dateStr = emailDate.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Toolbar */}
@@ -24,15 +31,19 @@ export function EmailView({ email, onBack, onReply, onSpam, isSpam }: EmailViewP
           </svg>
         </button>
         <div className="flex-1" />
-        {!isSpam && (
-          <button
-            onClick={() => onSpam(email.id)}
-            className="px-3 py-1 text-[11px] text-[#8e8ea0] hover:text-[#c5221f] rounded-lg hover:bg-[#fce8e6] transition-colors"
-            title="Move to spam"
-          >
-            Spam
-          </button>
-        )}
+        <button
+          onClick={() => onToggleStar(email.id)}
+          className={`p-1.5 rounded-lg transition-colors ${
+            email.starred
+              ? "text-[#f59e0b]"
+              : "text-[#d9d9e3] hover:text-[#f59e0b]"
+          }`}
+          aria-label={email.starred ? "Unstar" : "Star"}
+        >
+          <svg className="w-4 h-4" fill={email.starred ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+          </svg>
+        </button>
       </div>
 
       {/* Email content */}
@@ -43,7 +54,7 @@ export function EmailView({ email, onBack, onReply, onSpam, isSpam }: EmailViewP
             {email.subject}
           </h2>
 
-          {/* Sender */}
+          {/* Sender header */}
           <div className="flex items-start gap-3 mb-6 pb-6 border-b border-[#ececf1]">
             <div className="w-9 h-9 rounded-full bg-[#0d0d0d] text-white flex items-center justify-center text-xs font-medium shrink-0">
               {email.from.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
@@ -53,7 +64,11 @@ export function EmailView({ email, onBack, onReply, onSpam, isSpam }: EmailViewP
                 <span className="text-sm font-medium text-[#0d0d0d]">{email.from.name}</span>
                 <span className="text-xs text-[#8e8ea0]">&lt;{email.from.email}&gt;</span>
               </div>
-              <div className="text-[11px] text-[#8e8ea0] mt-0.5">{email.from.role}</div>
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <span className="text-[11px] text-[#8e8ea0]">{email.from.role}</span>
+                <span className="text-[11px] text-[#c5c5d2]">·</span>
+                <span className="text-[11px] text-[#8e8ea0]">{dateStr}</span>
+              </div>
             </div>
           </div>
 

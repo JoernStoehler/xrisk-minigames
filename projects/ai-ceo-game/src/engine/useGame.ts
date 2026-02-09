@@ -4,7 +4,6 @@ import {
   createInitialState,
   advanceDay,
   handleReply,
-  spamEmail,
   markRead,
 } from "./state";
 import { baselineEmails } from "../data/baseline";
@@ -14,7 +13,6 @@ const UI_STORAGE_KEY = "ai-ceo-game-ui";
 
 export interface UIState {
   selectedEmailId: string | null;
-  showSpam: boolean;
 }
 
 function saveState(state: GameState) {
@@ -42,10 +40,10 @@ export function saveUIState(ui: UIState) {
 export function loadUIState(): UIState {
   try {
     const raw = localStorage.getItem(UI_STORAGE_KEY);
-    if (!raw) return { selectedEmailId: null, showSpam: false };
+    if (!raw) return { selectedEmailId: null };
     return JSON.parse(raw) as UIState;
   } catch {
-    return { selectedEmailId: null, showSpam: false };
+    return { selectedEmailId: null };
   }
 }
 
@@ -110,7 +108,7 @@ export function useGame() {
     saveState(state);
   }, [state]);
 
-  const allEmails = useMemo(() => {
+  const emails = useMemo(() => {
     const baseline = getAvailableEmails(state);
     const injected = resolveInjectedEmails(state);
 
@@ -123,16 +121,6 @@ export function useGame() {
     });
     return unique.sort((a, b) => b.date.localeCompare(a.date));
   }, [state]);
-
-  const inboxEmails = useMemo(
-    () => allEmails.filter((e) => !e.spammed),
-    [allEmails],
-  );
-
-  const spamEmails = useMemo(
-    () => allEmails.filter((e) => e.spammed),
-    [allEmails],
-  );
 
   const nextEmailDate = useMemo(() => getNextEmailDate(state), [state]);
 
@@ -168,12 +156,17 @@ export function useGame() {
     });
   }, []);
 
-  const spam = useCallback((emailId: string) => {
-    setState((prev) => spamEmail(prev, emailId));
-  }, []);
-
   const read = useCallback((emailId: string) => {
     setState((prev) => markRead(prev, emailId));
+  }, []);
+
+  const toggleStar = useCallback((emailId: string) => {
+    setState((prev) => ({
+      ...prev,
+      emails: prev.emails.map((e) =>
+        e.id === emailId ? { ...e, starred: !e.starred } : e,
+      ),
+    }));
   }, []);
 
   const restart = useCallback(() => {
@@ -184,13 +177,12 @@ export function useGame() {
 
   return {
     state,
-    inboxEmails,
-    spamEmails,
+    emails,
     advanceToNext,
     nextEmailDate,
     reply,
-    spam,
     read,
+    toggleStar,
     restart,
   };
 }

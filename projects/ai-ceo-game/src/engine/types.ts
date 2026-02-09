@@ -34,8 +34,8 @@ export interface Email {
   read?: boolean;
   /** Which reply was chosen */
   chosenReply?: string;
-  /** If true, was moved to spam */
-  spammed?: boolean;
+  /** If true, player has starred this email */
+  starred?: boolean;
   /** Tags for filtering/modification by modifiers */
   tags?: string[];
 }

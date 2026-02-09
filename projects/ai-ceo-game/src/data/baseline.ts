@@ -5,7 +5,54 @@ import { PEOPLE } from "./personnel";
  * Baseline scenario emails. These arrive on their scheduled dates
  * unless suppressed by modifiers. Dates are absolute (YYYY-MM-DD).
  */
+/** System sender for tutorial/meta emails */
+const SYSTEM_SENDER: Email["from"] = {
+  id: "system",
+  name: "IT Support",
+  role: "IT Department",
+  email: "it-support@openai.com",
+  greeting: "Hi,",
+  signoff: "— IT Support\nOpenAI",
+};
+
+const RECRUITER: Email["from"] = {
+  id: "recruiter",
+  name: "Talent Connect Pro",
+  role: "Executive Recruiting Platform",
+  email: "no-reply@talentconnectpro.com",
+  greeting: "",
+  signoff: "",
+};
+
+const NEWSLETTER: Email["from"] = {
+  id: "newsletter",
+  name: "AI Weekly Digest",
+  role: "Newsletter",
+  email: "digest@aiweekly.io",
+  greeting: "",
+  signoff: "",
+};
+
 export const baselineEmails: Email[] = [
+  // === DAY 1: Tutorial ===
+  {
+    id: "tutorial",
+    from: SYSTEM_SENDER,
+    subject: "Welcome — your new email is set up",
+    body: `Welcome to your new role as CEO.
+
+Your executive inbox is ready. Here's what you need to know:
+
+• New emails will arrive over time. Tap the ›› button in the top-right to advance to the next incoming message.
+• Some emails ask you to make a decision — you'll see reply options at the bottom.
+• Not every email needs a response. Some are informational, some are noise.
+• The sidebar (☰ on mobile) shows company metrics. Keep an eye on them.
+
+Your first board briefing should arrive tomorrow. Good luck.`,
+    date: "2026-10-14",
+    tags: ["tutorial"],
+  },
+
   // === WEEK 1: Onboarding / status quo ===
   {
     id: "welcome-board",
@@ -86,6 +133,28 @@ ${PEOPLE.headOfSafety.signoff}`,
         triggersModifier: "safety-concerns-investigate",
       },
     ],
+  },
+
+  // === Junk: Recruiter spam ===
+  {
+    id: "junk-recruiter",
+    from: RECRUITER,
+    subject: "Exclusive: 3 CEOs are looking to connect with you",
+    body: `Hi there,
+
+Your profile has been viewed by 3 top executives this week!
+
+🔥 HOT OPPORTUNITY: Chief Innovation Officer at [Major Tech Company]
+💰 Compensation: $4.2M+ base + equity
+📍 San Francisco / Remote
+
+Don't miss your chance to explore the next chapter of your career. Premium members get 5x more profile views.
+
+Upgrade to TalentConnect Premium™ today →
+
+Unsubscribe | Privacy Policy | 123 Market St, San Francisco, CA 94105`,
+    date: "2026-10-25",
+    tags: ["junk"],
   },
 
   // === MONTH 2: Numbers go up ===
@@ -211,8 +280,8 @@ ${PEOPLE.externalExpert.signoff}`,
     tags: ["external", "safety", "expert"],
     replyOptions: [
       {
-        id: "spam-expert",
-        text: "[Move to spam]",
+        id: "dismiss-expert",
+        text: "Thank you for your concern, Dr. Voss. Our safety protocols are comprehensive and we're confident in our approach.",
         triggersModifier: "expert-warning-ignore",
       },
       {
@@ -221,6 +290,37 @@ ${PEOPLE.externalExpert.signoff}`,
         triggersModifier: "expert-warning-engage",
       },
     ],
+  },
+
+  // === Junk: Newsletter ===
+  {
+    id: "junk-newsletter",
+    from: NEWSLETTER,
+    subject: "This Week in AI: Google's new model, EU regulation update, and more",
+    body: `AI WEEKLY DIGEST — Issue #847
+
+TOP STORIES
+
+1. Google DeepMind announces Gemini Ultra 2 with "near-human reasoning"
+   Benchmarks show marginal improvements over previous generation. Critics note the benchmarks are increasingly meaningless as models are trained on benchmark data.
+
+2. EU AI Act enforcement begins — first fines expected by Q3
+   Companies scramble to comply with transparency requirements. Most are adding disclaimers nobody reads.
+
+3. Anthropic raises $15B at $180B valuation
+   The AI arms race continues. No signs of slowing down.
+
+4. Open-source LLM community releases "FreedomGPT-70B"
+   Uncensored model immediately used to generate spam. Surprised exactly nobody.
+
+5. Stanford study: 78% of AI safety researchers now work at AI companies
+   The fox guarding the henhouse, but the henhouse pays really well.
+
+---
+You're receiving this because you signed up at aiweekly.io
+Unsubscribe`,
+    date: "2027-02-18",
+    tags: ["junk", "newsletter"],
   },
 
   // === MONTH 5-8: Frog boiling ===

@@ -184,7 +184,7 @@ ${PEOPLE.headOfEngineering.signoff}`,
   "expert-warning-ignore": {
     id: "expert-warning-ignore",
     name: "Ignored expert warning",
-    description: "You moved Dr. Voss's email to spam.",
+    description: "You dismissed Dr. Voss's warning about autonomous lab access.",
   },
   "expert-warning-engage": {
     id: "expert-warning-engage",

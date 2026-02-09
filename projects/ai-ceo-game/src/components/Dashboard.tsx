@@ -8,44 +8,39 @@ import { Disclaimer } from "./Disclaimer";
 
 interface DashboardProps {
   state: GameState;
-  inboxEmails: Email[];
-  spamEmails: Email[];
+  emails: Email[];
   onAdvance: () => void;
   nextEmailDate: string | null;
   onReply: (emailId: string, replyId: string) => void;
-  onSpam: (emailId: string) => void;
   onRead: (emailId: string) => void;
+  onToggleStar: (emailId: string) => void;
   onNewGame: () => void;
 }
 
 export function Dashboard({
   state,
-  inboxEmails,
-  spamEmails,
+  emails,
   onAdvance,
   nextEmailDate,
   onReply,
-  onSpam,
   onRead,
+  onToggleStar,
   onNewGame,
 }: DashboardProps) {
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(() => loadUIState().selectedEmailId);
-  const [showSpam, setShowSpam] = useState(() => loadUIState().showSpam);
   const [showSidebar, setShowSidebar] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   // Persist UI state
   useEffect(() => {
-    saveUIState({ selectedEmailId, showSpam });
-  }, [selectedEmailId, showSpam]);
+    saveUIState({ selectedEmailId });
+  }, [selectedEmailId]);
 
-  const currentList = showSpam ? spamEmails : inboxEmails;
-  // If selected email was moved to spam, deselect it
-  const effectiveSelectedId = currentList.some((e) => e.id === selectedEmailId)
+  const effectiveSelectedId = emails.some((e) => e.id === selectedEmailId)
     ? selectedEmailId
     : null;
   const selectedEmail = effectiveSelectedId
-    ? currentList.find((e) => e.id === effectiveSelectedId)
+    ? emails.find((e) => e.id === effectiveSelectedId)
     : undefined;
 
   const handleSelectEmail = (id: string) => {
@@ -57,9 +52,8 @@ export function Dashboard({
     setSelectedEmailId(null);
   };
 
-  const unreadCount = inboxEmails.filter((e) => !e.read).length;
-
-  const allCaughtUp = inboxEmails.length > 0 && unreadCount === 0;
+  const unreadCount = emails.filter((e) => !e.read).length;
+  const allCaughtUp = emails.length > 0 && unreadCount === 0;
 
   const advanceTitle = nextEmailDate
     ? `Skip to ${formatShortDate(nextEmailDate)}`
@@ -120,14 +114,8 @@ export function Dashboard({
         >
           <Sidebar
             metrics={state.metrics}
-            showSpam={showSpam}
-            onToggleSpam={() => {
-              setShowSpam(!showSpam);
-              setSelectedEmailId(null);
-            }}
-            inboxCount={inboxEmails.length}
+            emailCount={emails.length}
             unreadCount={unreadCount}
-            spamCount={spamEmails.length}
             onNewGame={onNewGame}
             onShowDisclaimer={() => setShowDisclaimer(true)}
           />
@@ -147,14 +135,12 @@ export function Dashboard({
               email={selectedEmail}
               onBack={handleBack}
               onReply={onReply}
-              onSpam={onSpam}
-              isSpam={showSpam}
+              onToggleStar={onToggleStar}
             />
           ) : (
             <Inbox
-              emails={currentList}
+              emails={emails}
               onSelect={handleSelectEmail}
-              isSpam={showSpam}
             />
           )}
         </main>

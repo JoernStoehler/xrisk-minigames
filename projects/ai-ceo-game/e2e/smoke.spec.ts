@@ -5,13 +5,19 @@ test("page loads", async ({ page }) => {
   await expect(page).toHaveTitle(/OpenAI/);
 });
 
-test("can advance days and see emails", async ({ page }) => {
+test("can advance and see emails", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
-  // Advance 2 days to get first email
-  await page.click("text=Next Day");
-  await page.click("text=Next Day");
+  // Clear any saved state
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+
+  // Tutorial email should be visible on day 1
+  await expect(page.locator("text=IT Support")).toBeVisible();
+
+  // Click the advance button (>> icon)
+  await page.click("[title^='Skip to']");
 
   // Should see the board email
   await expect(page.locator("text=Richard Townsend")).toBeVisible();
