@@ -3,9 +3,9 @@
 ## Current
 - [ ] Reply expiry UX (show expired state, auto-resolve defaults)
 - [ ] Mobile polish pass
-- [ ] Further content: more decision branches, late-game consequences, additional filler
+- [ ] Expert content review: all content (emails, decisions, metrics, dialogue) is agent-written — none is expert-authored
   - Late game (Jan–Sep 2028) has zero decisions — player just clicks >> to death
-  - Metrics don't trigger anything — no "if oversight < 20" conditional emails
+  - Metrics (stock, revenue, trust, board, capability, oversight) are decorative — don't trigger anything
   - Context-aware body text (`ctx.metrics`) is available but underused
 
 ## Upcoming Milestones
