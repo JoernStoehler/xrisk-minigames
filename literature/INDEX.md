@@ -11,6 +11,7 @@
 | ai-investment-bubble-2024-2025.md | AI Investment and Stock Market Signals 2024-2025 | Various (financial reports, analyst commentary) | 2024-2025 | No |
 | aisi-frontier-trends-2025.md | Frontier AI Trends Report | UK AI Security Institute (AISI) | 2025 | No |
 | anthropic-alignment-faking.md | Alignment Faking in Large Language Models | Ryan Greenblatt, Carson Denison, Benjamin Wright, et al. | 2024 | No |
+| anthropic-alignment-increasingly-solvable.md | Alignment is Not Solved But Increasingly Looks Solvable | Jan Leike | 2026 | No |
 | anthropic-reward-hacking.md | Natural Emergent Misalignment from Reward Hacking in Production RL | Monte MacDiarmid, Benjamin Wright, Jonathan Uesato, et al. | 2025 | No |
 | anthropic-rsp-v2-2024.md | Anthropic Responsible Scaling Policy v2 | Anthropic | 2024 | No |
 | anthropic-sleeper-agents.md | Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training | Evan Hubinger, Carson Denison, Jesse Mu, et al. | 2024 | No |
