@@ -31,17 +31,13 @@ function computeEmails(state: GameState): Email[] {
     if (!email) continue;
 
     const ui = state.emailUI[email.id];
-    const expired =
-      email.replyExpiresOn &&
-      state.currentDate > email.replyExpiresOn &&
-      !ui?.chosenReply;
 
     result.push({
       ...email,
       read: ui?.read,
       starred: ui?.starred,
       chosenReply: ui?.chosenReply,
-      replyOptions: expired ? undefined : email.replyOptions,
+      autoResolved: ui?.autoResolved,
     });
   }
   return result;
@@ -61,6 +57,30 @@ function getNextEmailDate(state: GameState): string | null {
     if (!earliest || date < earliest) earliest = date;
   }
   return earliest;
+}
+
+/** Auto-resolve expired decisions that have a defaultReplyId. */
+function autoResolveExpired(state: GameState): GameState {
+  const emails = computeEmails(state);
+  let s = state;
+  for (const email of emails) {
+    if (
+      email.replyExpiresOn &&
+      s.currentDate > email.replyExpiresOn &&
+      email.defaultReplyId &&
+      !s.emailUI[email.id]?.chosenReply
+    ) {
+      s = handleReply(s, email, email.defaultReplyId);
+      s = {
+        ...s,
+        emailUI: {
+          ...s.emailUI,
+          [email.id]: { ...s.emailUI[email.id], autoResolved: true },
+        },
+      };
+    }
+  }
+  return s;
 }
 
 // ── Decision strategies ──
@@ -182,13 +202,16 @@ for (const [name, description, strategy] of STRATEGIES) {
           output += "\n";
           state = handleReply(state, email, matchingOption.id);
         } else {
-          output += "> *Decision window expired — no reply sent.*\n\n";
-          output += "Options were:\n";
-          for (const opt of email.replyOptions) {
-            output += `- "${opt.text}"`;
-            if (opt.effects) output += ` *(${formatEffects(opt.effects)})*`;
-            if (opt.endsGame) output += ` **[ENDS GAME]**`;
-            output += "\n";
+          const defaultOpt = email.defaultReplyId
+            ? email.replyOptions.find((o) => o.id === email.defaultReplyId)
+            : null;
+          if (defaultOpt) {
+            output += `> **YOU DIDN'T RESPOND** — default applied: "${defaultOpt.text}"\n`;
+            if (defaultOpt.effects) {
+              output += `> *Effects: ${formatEffects(defaultOpt.effects)}*\n`;
+            }
+          } else {
+            output += "> *Decision window expired — no reply sent.*\n";
           }
           output += "\n";
         }
@@ -206,6 +229,7 @@ for (const [name, description, strategy] of STRATEGIES) {
         state = advanceDay(state);
       }
     }
+    state = autoResolveExpired(state);
   }
 
   // Game over summary

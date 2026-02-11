@@ -128,6 +128,9 @@ for (const [month, defs] of months) {
       if (email.replyExpiresOn) {
         out += `> - *Expires: ${email.replyExpiresOn}*\n`;
       }
+      if (email.defaultReplyId) {
+        out += `> - *Default (if ignored): \`${email.defaultReplyId}\`*\n`;
+      }
     }
 
     out += `>\n> **Concept:** *(to be filled in)*\n`;

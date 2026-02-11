@@ -23,7 +23,7 @@ export function EmailView({ email, onBack, onReply, onToggleStar }: EmailViewPro
       <div className="px-4 py-2 border-b border-[#ececf1] shrink-0 flex items-center gap-2">
         <button
           onClick={onBack}
-          className="p-1.5 text-[#8e8ea0] hover:text-[#0d0d0d] rounded-lg hover:bg-[#f0f0f3] transition-colors"
+          className="p-2.5 -ml-1 text-[#8e8ea0] hover:text-[#0d0d0d] rounded-lg hover:bg-[#f0f0f3] transition-colors"
           aria-label="Back to inbox"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,7 +33,7 @@ export function EmailView({ email, onBack, onReply, onToggleStar }: EmailViewPro
         <div className="flex-1" />
         <button
           onClick={() => onToggleStar(email.id)}
-          className={`p-1.5 rounded-lg transition-colors ${
+          className={`p-2.5 -mr-1 rounded-lg transition-colors ${
             email.starred
               ? "text-[#f59e0b]"
               : "text-[#d9d9e3] hover:text-[#f59e0b]"
@@ -86,8 +86,8 @@ export function EmailView({ email, onBack, onReply, onToggleStar }: EmailViewPro
             </div>
           )}
 
-          {/* Reply options */}
-          {email.replyOptions && !email.chosenReply && (
+          {/* Reply options — active (not expired, not yet replied) */}
+          {email.replyOptions && !email.chosenReply && !email.expired && (
             <div className="mt-8 pt-6 border-t border-[#ececf1] space-y-2">
               <div className="text-[11px] font-medium text-[#8e8ea0] uppercase tracking-wider mb-3">
                 Reply
@@ -104,8 +104,28 @@ export function EmailView({ email, onBack, onReply, onToggleStar }: EmailViewPro
             </div>
           )}
 
-          {/* Chosen reply */}
-          {email.chosenReply && (
+          {/* Expired — no reply was sent (edge case: no defaultReplyId) */}
+          {email.expired && !email.chosenReply && (
+            <div className="mt-8 pt-6 border-t border-[#ececf1]">
+              <div className="px-4 py-3 rounded-xl bg-[#f0f0f3] border border-[#d9d9e3] text-[13px] text-[#6e6e80]">
+                <div className="text-[10px] uppercase tracking-wider text-[#8e8ea0] font-medium mb-1">Reply window closed</div>
+                You didn&apos;t respond in time.
+              </div>
+            </div>
+          )}
+
+          {/* Auto-resolved — window closed, default action taken */}
+          {email.chosenReply && email.autoResolved && (
+            <div className="mt-8 pt-6 border-t border-[#ececf1]">
+              <div className="px-4 py-3 rounded-xl bg-[#fff3cd] border border-[#ffc107]/20 text-[13px] text-[#856404]">
+                <div className="text-[10px] uppercase tracking-wider text-[#856404]/60 font-medium mb-1">You didn&apos;t respond</div>
+                {email.replyOptions?.find((r) => r.id === email.chosenReply)?.text}
+              </div>
+            </div>
+          )}
+
+          {/* Chosen reply — player replied manually */}
+          {email.chosenReply && !email.autoResolved && (
             <div className="mt-8 pt-6 border-t border-[#ececf1]">
               <div className="px-4 py-3 rounded-xl bg-oai-green-light border border-oai-green/20 text-[13px] text-[#065f46]">
                 <div className="text-[10px] uppercase tracking-wider text-oai-green/60 font-medium mb-1">You replied</div>

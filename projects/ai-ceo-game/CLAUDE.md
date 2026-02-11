@@ -49,7 +49,7 @@ A web-based interactive experience where the player is CEO of OpenAI in late 202
 
 **How decisions work:** When the player picks a reply option with `decisionId`, `handleReply()` records a `Decision` (id, choice, date) in `state.decisions[]` and applies metric `effects`. Future email generators read decisions via `chose(ctx, decisionId, choiceId)` and `decisionDate(ctx, decisionId)` to decide whether/when to deliver.
 
-**How time works:** `advanceToNext()` calls `advanceDay()` in a loop until reaching the next email's delivery date. Each day ticks metrics (AI capability slowly rises, oversight slowly decays). Game ends automatically when date reaches 2028-09-15.
+**How time works:** `advanceToNext()` calls `advanceDay()` in a loop until reaching the next email's delivery date. Each day ticks metrics (AI capability slowly rises, oversight slowly decays). Game ends automatically when date reaches 2028-09-15. After advancing, `autoResolveExpired()` applies `defaultReplyId` on any decision email whose `replyExpiresOn` has passed without a player reply — this records the decision and applies effects as if the player chose the default, and marks `autoResolved: true` in `emailUI`.
 
 ### Content (`src/data/`)
 
