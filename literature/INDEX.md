@@ -18,7 +18,8 @@
 | apollo-incontext-scheming.md | Frontier Models are Capable of In-Context Scheming | Apollo Research | 2024 | No |
 | deepmind-frontier-safety-framework-v3-2025.md | Google DeepMind Frontier Safety Framework v3 | Google DeepMind | 2025 | No |
 | eu-ai-act-summary.md | EU AI Act: Comprehensive Summary | European Commission / European Parliament | 2024 | No |
-| iabied-book.md | If Anyone Builds It, Everyone Dies | Eliezer Yudkowsky, Nate Soares | 2025 | Yes | [aspirational] — not yet downloaded |
+| dario-amodei-machines-of-loving-grace.md | Machines of Loving Grace | Dario Amodei | 2024 | No |
+| iabied-book.md | If Anyone Builds It, Everyone Dies | Eliezer Yudkowsky, Nate Soares | 2025 | Yes |
 | jan-leike-openai-departure-2024.md | Jan Leike's Departure from OpenAI | Jan Leike (public statements) | 2024 | No |
 | metr-gpt5-eval.md | METR's Evaluation of OpenAI GPT-5 | METR (Model Evaluation & Threat Research) | 2025 | No |
 | miri-communications-strategy-2024.md | MIRI Communications Strategy and Approach | MIRI / Eliezer Yudkowsky / Nate Soares | 2024 | No |
