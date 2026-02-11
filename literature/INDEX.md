@@ -30,7 +30,9 @@
 | iabied-book.md | If Anyone Builds It, Everyone Dies | Eliezer Yudkowsky, Nate Soares | 2025 | Yes |
 | jan-leike-openai-departure-2024.md | Jan Leike's Departure from OpenAI | Jan Leike (public statements) | 2024 | No |
 | metr-gpt5-eval.md | METR's Evaluation of OpenAI GPT-5 | METR (Model Evaluation & Threat Research) | 2025 | No |
+| miri-agent-foundations-agenda-2014.md | Agent Foundations for Aligning Machine Intelligence with Human Interests: A Technical Research Agenda | Nate Soares, Benya Fallenstein | 2014 | No |
 | miri-communications-strategy-2024.md | MIRI Communications Strategy and Approach | MIRI / Eliezer Yudkowsky / Nate Soares | 2024 | No |
+| miri-corrigibility-2015.md | Corrigibility | Nate Soares, Benja Fallenstein, Eliezer Yudkowsky, Stuart Armstrong | 2015 | No |
 | openai-preparedness-framework-v2-2025.md | OpenAI Preparedness Framework v2 | OpenAI | 2025 | No |
 | pew-ai-global-views-2025.md | How People Around the World View AI | Pew Research Center | 2025 | No |
 | pew-ai-public-vs-expert-views-2025.md | How the US Public and AI Experts View Artificial Intelligence | Pew Research Center | 2025 | No |
