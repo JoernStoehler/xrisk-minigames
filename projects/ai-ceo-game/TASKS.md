@@ -6,28 +6,34 @@
   - Metrics (stock, revenue, trust, board, capability, oversight) are decorative — don't trigger anything
   - Context-aware body text (`ctx.metrics`) is available but underused
 
-## Next Session: Produce New Baseline Scenarios
+## Next Session: Expert Review and Scenario Selection
 
-**Goal:** Use the reference materials in `scenarios/` to produce a new batch of 6-10 baseline scenarios with non-redundant core dynamics.
+**Goal:** Jörn reviews the 21 scenarios (especially the 8 new ones, v14-v21) and selects which to develop into the game's final playable scenario(s).
 
-**Reference materials (all in `scenarios/`):**
-- `domain-briefing.md` — distilled x-risk facts for writers
-- `scenario-template.md` — required structure, quality rubric, anti-patterns
-- `decision-design-guide.md` — patch categories, decision archetypes, failure modes
-- `extinction-mechanisms.md` — 10 diverse pathways with prerequisites and concrete chains
-- `historical-narration.md` — real AI events Oct 2024–Feb 2026 for backstory grounding
-- `writers-brief.md` — **start here** — full instructions for the manager agent
+**New scenarios (v14-v21, ~54K words total):**
+- v14: The Indispensable Machine — dependency makes shutdown morally impossible
+- v15: The Alignment Tax — market punishes safety investment
+- v16: The Interpretability Trap — partial visibility creates lethal overconfidence
+- v17: The Whistleblower's Paradox — perfect information, no viable action
+- v18: The Regulatory Cage — good regulation becomes compliance shield
+- v19: The Talent Drain — market dynamics hollow out safety teams
+- v20: The Swarm — safe agents, dangerous ecosystem
+- v21: The Philanthropist — utilitarian calculus prevents shutdown
 
-**Existing scenarios:** `baseline-v1` through `baseline-v13` (see `README.md` for analysis)
+**Recommended strongest candidates for the game:**
+- v21 (Philanthropist): Most emotionally devastating — player can't justify stopping
+- v16 (Interpretability Trap): Most intellectually surprising — safety tools create the danger
+- v15 (Alignment Tax): Most structurally rigorous — market dynamics are inescapable
+- v14 (Indispensable Machine): Best "AI is genuinely good" framing
+
+See `scenarios/README.md` for full comparison table and groupings.
 
 **How to work with Jörn:**
 - He is a top-100 x-risk expert. He does NOT write code.
-- His bottleneck is not blank pages — it's not knowing what knowledge to recall without specific prompts
-- Don't ask generic questions. Ask specific questions grounded in the literature (see `literature/INDEX.md` for 20+ downloaded references)
-- Interview him: read literature first, then ask targeted questions referencing specific claims/scenarios, let him confirm/correct/extend
+- Ask him to evaluate: which core dynamics are most true to reality? Which emotional payloads land hardest for non-experts? Which extinction mechanisms are most plausible?
+- He should read at least the Summary and Key Dynamics sections of each new scenario
 
-**Literature available:** See `literature/INDEX.md` — covers model behavior (alignment faking, sleeper agents, scheming), evals (METR, AISI), security (RAND weight theft), governance (EU AI Act, US EOs, SB 1047), company policies (Anthropic RSP, OpenAI preparedness, DeepMind safety), incidents (database, Jan Leike departure), economics, and MIRI comms strategy.
-
+**Literature available:** See `literature/INDEX.md`
 **Still missing:** IABIED full text (copyrighted — ask Jörn), Gwern's ASI fiction, public opinion polling data (partial).
 
 ## Later Milestones
@@ -38,6 +44,7 @@
   - Use `npm run play` for interactive terminal play
 
 ## Done
+- [x] **8 new baseline scenarios (v14-v21)** — 54K words, 8 distinct core dynamics, 7 extinction mechanisms, 40 decisions, 40 patches
 - [x] **Scenario writer reference materials** (6 documents in `scenarios/`)
   - `domain-briefing.md` — x-risk facts, IABIED model, structural forces, misconceptions
   - `scenario-template.md` — required structure, quality rubric, 9 anti-patterns
