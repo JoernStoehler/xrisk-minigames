@@ -58,12 +58,17 @@ export function Inbox({ emails, onSelect, onToggleStar }: InboxProps) {
             </div>
             {/* Badges */}
             <div className="flex gap-1.5 mt-1.5">
-              {email.replyOptions && !email.chosenReply && (
+              {email.replyOptions && !email.chosenReply && !email.expired && (
                 <span className="text-[10px] px-2 py-0.5 bg-[#fff3cd] text-[#856404] rounded-full font-medium">
                   Action needed
                 </span>
               )}
-              {email.chosenReply && (
+              {(email.expired || email.autoResolved) && (
+                <span className="text-[10px] px-2 py-0.5 bg-[#f0f0f3] text-[#8e8ea0] rounded-full font-medium">
+                  Missed
+                </span>
+              )}
+              {email.chosenReply && !email.autoResolved && (
                 <span className="text-[10px] px-2 py-0.5 bg-oai-green-light text-[#065f46] rounded-full font-medium">
                   Replied
                 </span>

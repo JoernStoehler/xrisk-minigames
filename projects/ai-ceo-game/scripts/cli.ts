@@ -43,17 +43,13 @@ function computeEmails(state: GameState): Email[] {
     if (!email) continue;
 
     const ui = state.emailUI[email.id];
-    const expired =
-      email.replyExpiresOn &&
-      state.currentDate > email.replyExpiresOn &&
-      !ui?.chosenReply;
 
     result.push({
       ...email,
       read: ui?.read,
       starred: ui?.starred,
       chosenReply: ui?.chosenReply,
-      replyOptions: expired ? undefined : email.replyOptions,
+      autoResolved: ui?.autoResolved,
     });
   }
   return result;
@@ -75,18 +71,42 @@ function getNextEmailDate(state: GameState): string | null {
   return earliest;
 }
 
+/** Auto-resolve expired decisions that have a defaultReplyId. */
+function autoResolveExpired(state: GameState): GameState {
+  const emails = computeEmails(state);
+  let s = state;
+  for (const email of emails) {
+    if (
+      email.replyExpiresOn &&
+      s.currentDate > email.replyExpiresOn &&
+      email.defaultReplyId &&
+      !s.emailUI[email.id]?.chosenReply
+    ) {
+      s = handleReply(s, email, email.defaultReplyId);
+      s = {
+        ...s,
+        emailUI: {
+          ...s.emailUI,
+          [email.id]: { ...s.emailUI[email.id], autoResolved: true },
+        },
+      };
+    }
+  }
+  return s;
+}
+
 function advanceToNext(state: GameState): GameState {
   const targetDate = getNextEmailDate(state);
   if (!targetDate) {
     let s = state;
     while (s.phase === "playing") s = advanceDay(s);
-    return s;
+    return autoResolveExpired(s);
   }
   let s = state;
   while (s.currentDate < targetDate && s.phase === "playing") {
     s = advanceDay(s);
   }
-  return s;
+  return autoResolveExpired(s);
 }
 
 // ── State persistence ──
@@ -276,11 +296,13 @@ switch (command) {
       b.date.localeCompare(a.date)
     );
     for (const e of emails) {
-      const status = e.chosenReply
-        ? "[replied]"
-        : e.replyOptions?.length
-          ? "[ACTION NEEDED]"
-          : "";
+      const status = e.autoResolved
+        ? "[missed]"
+        : e.chosenReply
+          ? "[replied]"
+          : e.replyOptions?.length
+            ? "[ACTION NEEDED]"
+            : "";
       const tags = e.tags?.length ? ` (${e.tags.join(", ")})` : "";
       console.log(`${e.date} | ${e.from.name} | ${e.subject}${tags} ${status}`);
     }

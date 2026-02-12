@@ -51,9 +51,15 @@ export interface Email {
   replyOptions?: ReplyOption[];
   /** Date after which reply options expire and vanish. */
   replyExpiresOn?: string;
+  /** Reply option auto-selected when the window expires without a player reply. */
+  defaultReplyId?: string;
   read?: boolean;
   chosenReply?: string;
   starred?: boolean;
+  /** True if the reply window closed without the player responding (computed). */
+  expired?: boolean;
+  /** True if chosenReply was set by auto-resolve, not the player (computed from EmailUI). */
+  autoResolved?: boolean;
   tags?: string[];
 }
 
@@ -78,6 +84,8 @@ export interface EmailUI {
   read?: boolean;
   starred?: boolean;
   chosenReply?: string;
+  /** True if chosenReply was set by auto-resolve when the reply window expired. */
+  autoResolved?: boolean;
 }
 
 export interface Decision {

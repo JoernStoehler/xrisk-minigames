@@ -116,8 +116,8 @@ export function Dashboard({
             metrics={state.metrics}
             emailCount={emails.length}
             unreadCount={unreadCount}
-            onNewGame={onNewGame}
-            onShowDisclaimer={() => setShowDisclaimer(true)}
+            onNewGame={() => { setShowSidebar(false); onNewGame(); }}
+            onShowDisclaimer={() => { setShowSidebar(false); setShowDisclaimer(true); }}
           />
         </aside>
 

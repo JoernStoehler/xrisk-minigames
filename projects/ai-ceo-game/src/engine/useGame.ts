@@ -90,17 +90,17 @@ function computeEmails(state: GameState): Email[] {
     if (!email) continue;
 
     const ui = state.emailUI[email.id];
-    const expired =
-      email.replyExpiresOn &&
-      state.currentDate > email.replyExpiresOn &&
-      !ui?.chosenReply;
+    const pastExpiry =
+      email.replyExpiresOn && state.currentDate > email.replyExpiresOn;
+    const expired = !!pastExpiry && !ui?.chosenReply;
 
     result.push({
       ...email,
       read: ui?.read,
       starred: ui?.starred,
       chosenReply: ui?.chosenReply,
-      replyOptions: expired ? undefined : email.replyOptions,
+      autoResolved: ui?.autoResolved,
+      expired,
     });
   }
 
@@ -119,6 +119,30 @@ function getNextEmailDate(state: GameState): string | null {
   }
 
   return earliest;
+}
+
+/** Auto-resolve expired decisions that have a defaultReplyId. */
+function autoResolveExpired(state: GameState): GameState {
+  const emails = computeEmails(state);
+  let s = state;
+  for (const email of emails) {
+    if (
+      email.replyExpiresOn &&
+      s.currentDate > email.replyExpiresOn &&
+      email.defaultReplyId &&
+      !s.emailUI[email.id]?.chosenReply
+    ) {
+      s = handleReply(s, email, email.defaultReplyId);
+      s = {
+        ...s,
+        emailUI: {
+          ...s.emailUI,
+          [email.id]: { ...s.emailUI[email.id], autoResolved: true },
+        },
+      };
+    }
+  }
+  return s;
 }
 
 export function useGame() {
@@ -146,7 +170,7 @@ export function useGame() {
       if (!targetDate) {
         let s = prev;
         while (s.phase === "playing") s = advanceDay(s);
-        return s;
+        return autoResolveExpired(s);
       }
 
       let s = prev;
@@ -154,7 +178,7 @@ export function useGame() {
         s = advanceDay(s);
       }
 
-      return s;
+      return autoResolveExpired(s);
     });
   }, []);
 
