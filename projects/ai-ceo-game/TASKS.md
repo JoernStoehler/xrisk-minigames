@@ -52,6 +52,12 @@ See `scenarios/README.md` for full comparison table and groupings.
   - `extinction-mechanisms.md` — 10 diverse pathways (4 NO-WEAPON, 3 FAST) with concrete chains
   - `historical-narration.md` — real AI events Oct 2024–Feb 2026, 7 key patterns
   - `writers-brief.md` — manager-agent instructions for orchestrating scenario production
+- [x] **9 baseline scenarios + writer reference materials (ZHRVP)**
+  - Rewrote 5 weak scenarios (2, 4, 5, 6, 7) with concrete IABIED kill mechanisms
+  - Added 2 new scenarios: 8 (The Alignment Tax), 9 (The Good Samaritan)
+  - All 9 scenarios: Oct 2026 → June 2028, 5-7 decision points, named opposing forces
+  - Created `materials/` directory with 7 writer reference docs
+  - Fixed NPC guide: archetypes are authoritative, not agent-invented personnel.ts names
 - [x] **Reply expiry UX + mobile polish**
   - Expired decisions auto-resolve with sensible defaults (status quo / inaction)
   - EmailView: amber "You didn't respond" box for auto-resolved, gray for expired without default
