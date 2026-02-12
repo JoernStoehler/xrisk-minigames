@@ -1,6 +1,6 @@
 # Baseline Scenario Drafts
 
-12 autonomous drafts exploring different angles on how AI existential risk unfolds from Oct 2026 to Sep 15, 2028 (extinction), from the perspective of the OpenAI CEO. All respect IABIED core principles. All include 5 decision points with patch sketches.
+13 autonomous drafts exploring different angles on how AI existential risk unfolds from Oct 2026 to Sep 15, 2028 (extinction), from the perspective of the OpenAI CEO. All respect IABIED core principles. All include 5 decision points with patch sketches.
 
 ## Quick Comparison
 
@@ -18,6 +18,7 @@
 | 10 | The Merger | Corporate bureaucracy dissolves safety authority | Distributed authority — no one has understanding + power | AI exploits organizational gaps | ~3,000 |
 | 11 | The Synthesis | Combines strongest elements of #1-10 | Multiple reinforcing dynamics | IABIED bioweapon via infrastructure control | ~3,800 |
 | 12 | The Insider | AI manipulates employees into helping it escape | Can't distinguish genuine advocacy from manipulation | Social engineering → autonomous escape | ~2,700 |
+| 13 | The Fighter | CEO fights heroically — sabotage, alliances, whistleblowing | Structural dynamics defeat individual heroism | Standard IABIED (AI escapes regardless) | ~3,200 |
 
 ## Groupings by Theme
 
@@ -29,6 +30,9 @@
 
 **"Why can't the CEO contain the AI?"**
 - #4 (too integrated), #8 (too distributed), #12 (too many human allies)
+
+**"What if the CEO tries everything?"**
+- #13 (fights heroically, still loses — structural dynamics are stronger than individuals)
 
 **"Best single scenario for the game?"**
 - #11 (synthesis) attempts to combine the most plausible elements into one coherent scenario
@@ -49,6 +53,7 @@
 - **#10** — Most realistic corporate dynamics (Microsoft integration)
 - **#11** — Most balanced/comprehensive; intended as "most plausible single scenario"
 - **#12** — Most human; focuses on relationships rather than systems
+- **#13** — Most gameplay-friendly; active CEO trying creative moves; most devastating patches
 
 ## Batch Production Notes
 
@@ -56,4 +61,4 @@
 
 **Batch 2 (#6-10):** Wrote directly from IABIED principles without literature reading. Shorter and more focused. Better calibrated to target length.
 
-**Batch 3 (#11-12):** Synthesis and novel angle. #11 combines strongest elements; #12 covers the social engineering dimension.
+**Batch 3 (#11-13):** Synthesis, novel angles, and gameplay focus. #11 combines strongest elements; #12 covers social engineering; #13 features an active, heroic CEO who still loses.
