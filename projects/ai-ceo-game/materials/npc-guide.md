@@ -1,14 +1,18 @@
 # NPC Voice & Style Guide
 
-Reference for scenario writers creating email characters in the AI CEO game. The player is CEO of OpenAI from Oct 2026 to Sep 2028. Every path ends in extinction.
+Reference for scenario writers creating email characters in the AI CEO game. The player is CEO of OpenAI from Oct 2026 to June 2028. Every path ends in extinction.
+
+**Note on authority:** The scenarios are the authoritative content. `src/data/personnel.ts` in the game code is an earlier draft that will be updated to match whatever characters the scenarios establish. This guide defines **role archetypes** — the recurring functions characters serve in the narrative. Specific names are illustrative; name standardization across scenarios is a separate decision.
 
 ---
 
-## 1. The Canonical Cast
+## 1. Role Archetypes
 
-These 7 NPCs are defined in `src/data/personnel.ts` and appear throughout the game's email engine. Use these names and roles in all new scenario content.
+Every scenario needs characters filling these 7 roles. The profiles below define each role's voice, argument style, and narrative function. Example names are drawn from existing scenarios.
 
-### Dr. Maya Chen — VP of Research
+### The Capability Pusher (VP of Research / CTO)
+
+*Used as: Dr. Maya Chen (game code), Marcus Chen (S1, S2), Dr. Sarah Kim (S2)*
 
 - **Position:** Capability-optimist. Believes progress is inherently good. Treats safety concerns as solvable engineering problems that should not delay shipping.
 - **Wants from the CEO:** Green lights. Budget. Headcount. Permission to train the next model.
@@ -18,7 +22,9 @@ These 7 NPCs are defined in `src/data/personnel.ts` and appear throughout the ga
 - **Example opening:**
   > "Hi,\n\nQuick update on GPT-6 training:\n\nWe're seeing better-than-expected loss curves. The model is converging faster than GPT-5 did at comparable scale."
 
-### Dr. James Okafor — Head of Safety & Alignment
+### The Safety Voice (Head of Safety / VP of Safety)
+
+*Used as: Dr. James Okafor (game code), Dr. Elena Vasquez (S2), Dr. Lena Vasquez (S1), Dr. Sarah Lin (S5), Dr. Priya Chandrasekaran (S9)*
 
 - **Position:** The institutional safety voice. Cautious, evidence-based, careful not to overstate. His restraint is both his credibility and his limitation — he qualifies everything, making it easy to dismiss him.
 - **Wants from the CEO:** Investigation time. Compute for alignment evals. Permission to slow things down.
@@ -28,7 +34,9 @@ These 7 NPCs are defined in `src/data/personnel.ts` and appear throughout the ga
 - **Example opening:**
   > "Hello,\n\nI wanted to flag something from the latest eval run on the GPT-6 checkpoint.\n\nWe're seeing inconsistent behavior on our alignment evaluations."
 
-### Priya Ramanathan — VP of Engineering
+### The Pragmatic Operator (VP of Engineering / COO)
+
+*Used as: Priya Ramanathan (game code), James Whitfield (S2)*
 
 - **Position:** Pragmatic operator. Cares about shipping reliable systems. Not ideological about safety or capability — just wants things to work and schedules to hold.
 - **Wants from the CEO:** Clear priorities. No surprise scope changes. Predictable timelines.
@@ -38,7 +46,9 @@ These 7 NPCs are defined in `src/data/personnel.ts` and appear throughout the ga
 - **Example opening:**
   > "Hey,\n\nHeads up — if we go ahead with the investigation pause, I need to figure out what to do with the cluster. We can't just let 400K GPUs sit idle."
 
-### Richard Townsend — Board Chair
+### The Business Pressure (Board Chair)
+
+*Used as: Richard Townsend (game code, S5), Helen Park (S2)*
 
 - **Position:** Fiduciary-duty-first. Not anti-safety, but believes safety must be balanced against obligations to investors, partners, and employees. Frames every decision through stock price, competitive position, and Microsoft's expectations.
 - **Wants from the CEO:** Confidence, growth, and no surprises. Wants to hear that the company is winning.
@@ -48,7 +58,9 @@ These 7 NPCs are defined in `src/data/personnel.ts` and appear throughout the ga
 - **Example opening:**
   > "Dear CEO,\n\nI hope this finds you well. Attached are the Q3 highlights for your review ahead of next week's board meeting.\n\nKey points:\n— Revenue up 34% QoQ, driven by enterprise API adoption"
 
-### Sarah Kim — VP of Communications
+### The Public Interface (VP of Communications)
+
+*Used as: Sarah Kim (game code)*
 
 - **Position:** Narrative manager. Neither pro-safety nor pro-capability — pro-story. Her job is controlling what the public, press, and regulators believe about OpenAI.
 - **Wants from the CEO:** Advance warning of anything that could become a story. Veto power on public statements. Time to prepare messaging.
@@ -58,7 +70,9 @@ These 7 NPCs are defined in `src/data/personnel.ts` and appear throughout the ga
 - **Example opening:**
   > "Hi there,\n\nHeads up — Marcus Webb from The Verge just reached out asking about the training pause. He's heard something. I need to know what our line is before I call him back."
 
-### Dr. Lena Voss — AI Safety Researcher (Independent)
+### The External Alarm (Independent Safety Researcher)
+
+*Used as: Dr. Lena Voss (game code), Dr. Nadia Okafor (S1), Dr. Priya Sharma (S2)*
 
 - **Position:** External alarm. Sees patterns that insiders can't because she has no institutional incentives to look away. Technically rigorous but aware that she lacks insider data to be certain.
 - **Wants from the CEO:** Access. A meeting. For someone at OpenAI to take her findings seriously. Failing that, she wants the public to know.
@@ -68,7 +82,9 @@ These 7 NPCs are defined in `src/data/personnel.ts` and appear throughout the ga
 - **Example opening:**
   > "Dear CEO of OpenAI,\n\nI am writing to share findings from my independent analysis of GPT-6's public API responses. I have identified statistical anomalies that may indicate the presence of a steganographic side channel."
 
-### Marcus Webb — Senior Reporter, The Verge
+### The Media Threat (Senior Reporter)
+
+*Used as: Marcus Webb (game code)*
 
 - **Position:** Transparency pressure. Not hostile to OpenAI, but his job is the story. He has sources. He knows more than his emails reveal. He offers the CEO a chance to comment before publishing — a courtesy that is also leverage.
 - **Wants from the CEO:** A quote. A confirmation. Failing that, a "no comment" he can print alongside whatever his sources told him.
@@ -80,71 +96,22 @@ These 7 NPCs are defined in `src/data/personnel.ts` and appear throughout the ga
 
 ---
 
-## 2. Role Archetypes
+## 2. Name Standardization (Open Question)
 
-Each canonical NPC maps to a recurring archetype. Scenario writers should think in terms of these roles:
+The 9 existing scenarios each independently invented character names. The game code (`personnel.ts`) has yet another set, invented by an earlier agent. **No set of names is currently authoritative.**
 
-| Archetype | Canonical NPC | Function in the narrative |
-|---|---|---|
-| **The Safety Voice** | Dr. James Okafor | Warns, provides evidence, hedges, is ultimately ignorable |
-| **The Capability Pusher** | Dr. Maya Chen | Excited about progress, normalizes risk, makes acceleration feel rational |
-| **The Business Pressure** | Richard Townsend | Fiduciary duty, stock price, competitors, board consensus |
-| **The Pragmatic Operator** | Priya Ramanathan | Wants to ship, surfaces practical costs, favors the status quo |
-| **The Public Interface** | Sarah Kim | Manages narrative, damage control, thinks in headlines |
-| **The External Alarm** | Dr. Lena Voss | Independent expert who sees what insiders can't or won't |
-| **The Media Threat** | Marcus Webb | Transparency pressure, information leverage, deadlines |
+Before scenarios are translated into game code, a decision is needed: which names to use. Options:
+1. Pick the best names from across the scenarios
+2. Let Jörn choose names
+3. Use scenario-specific casts (different characters per scenario)
 
-When creating new scenario content, every email should come from someone who fills one of these roles. If a scene needs a voice not covered by the seven, see Section 4.
-
----
-
-## 3. Scenario Character Mapping
-
-Existing scenarios use different character names from the game code. This table maps them.
-
-### Scenario 1: The Quiet Threshold
-
-| Scenario name | Role | Canonical equivalent |
-|---|---|---|
-| Dr. Lena Vasquez | VP of Safety | **Dr. James Okafor** (Safety Voice) |
-| Marcus Chen | CTO | **Dr. Maya Chen** (Capability Pusher) |
-| Dr. Nadia Okafor | External safety researcher | **Dr. Lena Voss** (External Alarm) |
-| Tomás Reyes | Infrastructure engineer | No canonical equivalent (one-off) |
-
-### Scenario 2: The Boiling Frog
-
-| Scenario name | Role | Canonical equivalent |
-|---|---|---|
-| Dr. Elena Vasquez | VP of Safety | **Dr. James Okafor** (Safety Voice) |
-| Marcus Chen | CTO | **Dr. Maya Chen** (Capability Pusher) |
-| Dr. Sarah Kim | VP of Research | **Dr. Maya Chen** (Capability Pusher) — name collision with canonical Sarah Kim (VP Comms) |
-| Helen Park | Board Chair | **Richard Townsend** (Business Pressure) |
-| James Whitfield | COO | No canonical equivalent |
-| Dr. Priya Sharma | Alignment researcher | Loosely maps to **Dr. James Okafor** (Safety Voice) |
-| Daniel Kessler | Board member / investor rep | No canonical equivalent |
-
-### Scenario 5: The Race to the Bottom
-
-| Scenario name | Role | Canonical equivalent |
-|---|---|---|
-| Dr. Sarah Lin | VP of Safety | **Dr. James Okafor** (Safety Voice) |
-| Richard Townsend | Board Chair | **Richard Townsend** (exact match) |
-| Marcus Webb | Head of Business Dev | Name collision with canonical Marcus Webb (journalist) |
-| Senator David Briggs | Congressional pressure | No canonical equivalent (see Section 4) |
-| General Patricia Holt | Pentagon / Joint AI Center | No canonical equivalent (see Section 4) |
-| Dr. Thomas Park | Replacement VP of Safety | **Dr. James Okafor** variant |
-
-### Recommendation for future scenarios
-
-Use the canonical names from `personnel.ts`. If a scenario needs the Safety Voice, that character is Dr. James Okafor. If it needs the Capability Pusher, that is Dr. Maya Chen. This prevents confusion when scenarios are translated into game code, where the engine references `PEOPLE.headOfSafety`, `PEOPLE.headOfResearch`, etc.
-
-If you must introduce a named character who is not in the canonical seven, make sure the name does not collide with any canonical name (e.g., do not name a Board Chair "Helen Park" when the canonical Board Chair is "Richard Townsend").
+Until that decision is made, this guide defines **archetypes**, not specific characters. Writers should ensure each scenario has someone filling each relevant role, using whatever names fit the scenario's narrative.
 
 ---
 
 ## 4. Additional Characters
 
-These types appear in scenarios but are not in the canonical seven. They should be defined as one-off `Person` objects in `scenario.ts` (see `IT_SUPPORT`, `NEWSLETTER` in existing code). Give them a clear archetype.
+These types appear in scenarios beyond the core 7 archetypes. They serve as opposing forces, external pressure, or crisis escalation.
 
 ### Government Officials
 
@@ -212,10 +179,10 @@ These types appear in scenarios but are not in the canonical seven. They should 
 
 Characters should not all sound urgent in the same way:
 
-- **Okafor (Safety):** Urgency via understatement. "I think this warrants attention before we proceed." The reader should sense that his restraint is itself the alarm.
-- **Chen (Research):** Urgency via opportunity cost. "Google just announced X. Every week we wait is a week they get ahead."
-- **Townsend (Board):** Urgency via institutional consequence. "The board will need to discuss this at Thursday's session."
-- **Ramanathan (Engineering):** Urgency via logistics. "I need a decision by EOD or the cluster allocation locks in for the month."
-- **Kim (Comms):** Urgency via news cycle. "We have maybe 48 hours before this becomes the story."
-- **Voss (External):** Urgency escalates over time. First email is measured. If ignored, second email is more direct. Third is "I will be publishing my findings."
-- **Webb (Journalist):** Urgency via deadline. Always includes a specific date and time. Professional, never threatening — the deadline does the threatening.
+- **Safety Voice:** Urgency via understatement. "I think this warrants attention before we proceed." The reader should sense that restraint is itself the alarm.
+- **Capability Pusher:** Urgency via opportunity cost. "Google just announced X. Every week we wait is a week they get ahead."
+- **Business Pressure:** Urgency via institutional consequence. "The board will need to discuss this at Thursday's session."
+- **Pragmatic Operator:** Urgency via logistics. "I need a decision by EOD or the cluster allocation locks in for the month."
+- **Public Interface:** Urgency via news cycle. "We have maybe 48 hours before this becomes the story."
+- **External Alarm:** Urgency escalates over time. First email is measured. If ignored, second email is more direct. Third is "I will be publishing my findings."
+- **Media Threat:** Urgency via deadline. Always includes a specific date and time. Professional, never threatening — the deadline does the threatening.
