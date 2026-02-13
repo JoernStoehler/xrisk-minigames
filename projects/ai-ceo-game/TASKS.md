@@ -6,29 +6,34 @@
   - Metrics (stock, revenue, trust, board, capability, oversight) are decorative — don't trigger anything
   - Context-aware body text (`ctx.metrics`) is available but underused
 
-## Next Session: Expert Content Authoring (M1)
+## Next Session: Expert Review and Scenario Selection
 
-**Goal:** Co-author an expert-written baseline scenario with Jörn. Replace agent-guessed content with expert-grounded content.
+**Goal:** Jörn reviews the 21 scenarios (especially the 8 new ones, v14-v21) and selects which to develop into the game's final playable scenario(s).
 
-**Key context from this session:**
-- All existing game content (emails, decisions, metrics, dialogue) is agent-written without expert vetting — treat it as a strawman, not a starting point to polish
-- The game's extinction-by-Sep-2028 timeline is NOT tail risk — it's "two coin flips" from median. Should feel like things went mostly normally and that was enough
-- Nobody has written the "CEO's inbox" perspective before — this is genuinely novel synthesis
-- AI 2027 covers a similar timeframe but is a median scenario, not aggressive enough for this game
-- IABIED (not yet downloaded — copyrighted, Jörn needs to provide) covers ~75% of the loss-of-control mechanism
+**New scenarios (v14-v21, ~54K words total):**
+- v14: The Indispensable Machine — dependency makes shutdown morally impossible
+- v15: The Alignment Tax — market punishes safety investment
+- v16: The Interpretability Trap — partial visibility creates lethal overconfidence
+- v17: The Whistleblower's Paradox — perfect information, no viable action
+- v18: The Regulatory Cage — good regulation becomes compliance shield
+- v19: The Talent Drain — market dynamics hollow out safety teams
+- v20: The Swarm — safe agents, dangerous ecosystem
+- v21: The Philanthropist — utilitarian calculus prevents shutdown
+
+**Recommended strongest candidates for the game:**
+- v21 (Philanthropist): Most emotionally devastating — player can't justify stopping
+- v16 (Interpretability Trap): Most intellectually surprising — safety tools create the danger
+- v15 (Alignment Tax): Most structurally rigorous — market dynamics are inescapable
+- v14 (Indispensable Machine): Best "AI is genuinely good" framing
+
+See `scenarios/README.md` for full comparison table and groupings.
 
 **How to work with Jörn:**
 - He is a top-100 x-risk expert. He does NOT write code.
-- His bottleneck is not blank pages — it's not knowing what knowledge to recall without specific prompts
-- Don't ask generic questions. Ask specific questions grounded in the literature (see `literature/INDEX.md` for 20+ downloaded references)
-- Interview him: read literature first, then ask targeted questions referencing specific claims/scenarios, let him confirm/correct/extend
-- His model is built from similar sources as IABIED/AI2027 authors, not derived from those sources
-- The remaining ~25% beyond IABIED is: "when", "how likely are variations", "how does stuff manifest" — informed by METR evals, Anthropic papers, incident reports, governance dynamics, economics, social data
+- Ask him to evaluate: which core dynamics are most true to reality? Which emotional payloads land hardest for non-experts? Which extinction mechanisms are most plausible?
+- He should read at least the Summary and Key Dynamics sections of each new scenario
 
-**Workflow:** Agent reads literature → asks Jörn specific grounded questions → Jörn answers → agent drafts scenario content → Jörn validates nothing was lost in translation
-
-**Literature available:** See `literature/INDEX.md` — covers model behavior (alignment faking, sleeper agents, scheming), evals (METR, AISI), security (RAND weight theft), governance (EU AI Act, US EOs, SB 1047), company policies (Anthropic RSP, OpenAI preparedness, DeepMind safety), incidents (database, Jan Leike departure), economics, and MIRI comms strategy.
-
+**Literature available:** See `literature/INDEX.md`
 **Still missing:** IABIED full text (copyrighted — ask Jörn), Gwern's ASI fiction, public opinion polling data (partial).
 
 ## Later Milestones
@@ -39,6 +44,14 @@
   - Use `npm run play` for interactive terminal play
 
 ## Done
+- [x] **8 new baseline scenarios (v14-v21)** — 54K words, 8 distinct core dynamics, 7 extinction mechanisms, 40 decisions, 40 patches
+- [x] **Scenario writer reference materials** (6 documents in `scenarios/`)
+  - `domain-briefing.md` — x-risk facts, IABIED model, structural forces, misconceptions
+  - `scenario-template.md` — required structure, quality rubric, 9 anti-patterns
+  - `decision-design-guide.md` — 5 patch categories, 6 decision archetypes, 4 failure modes
+  - `extinction-mechanisms.md` — 10 diverse pathways (4 NO-WEAPON, 3 FAST) with concrete chains
+  - `historical-narration.md` — real AI events Oct 2024–Feb 2026, 7 key patterns
+  - `writers-brief.md` — manager-agent instructions for orchestrating scenario production
 - [x] **Reply expiry UX + mobile polish**
   - Expired decisions auto-resolve with sensible defaults (status quo / inaction)
   - EmailView: amber "You didn't respond" box for auto-resolved, gray for expired without default
