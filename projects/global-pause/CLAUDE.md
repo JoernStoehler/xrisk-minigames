@@ -81,7 +81,8 @@ src/
 - Dark command-center aesthetic (distinct from CEO game)
 - Monospace font for data-heavy display
 - ISIA blue accent (#3b82f6), urgency colors (yellow/orange/red)
-- 15-20 minute sessions, highly replayable
+- ~10 minute sessions, highly replayable
+- Mobile-first (portrait, touch targets ≥44px, no hover-dependent UI)
 
 ## Verification
 
