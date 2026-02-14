@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-isia-bg: #0a0e17;
+  --color-isia-panel: #111827;
+  --color-isia-border: #1f2937;
+  --color-isia-accent: #3b82f6;
+  --color-isia-text: #f9fafb;
+  --color-isia-muted: #9ca3af;
+  --color-urgency-yellow: #eab308;
+  --color-urgency-orange: #f97316;
+  --color-urgency-red: #ef4444;
+  --color-success: #22c55e;
+}
+
+body {
+  background-color: var(--color-isia-bg);
+  color: var(--color-isia-text);
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
+    "DejaVu Sans Mono", monospace;
+}
+
+.event-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.event-scroll::-webkit-scrollbar-track {
+  background: var(--color-isia-bg);
+}
+.event-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-isia-border);
+  border-radius: 3px;
+}
+
+@keyframes pulse-urgency {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+.animate-urgency {
+  animation: pulse-urgency 2s ease-in-out infinite;
+}
