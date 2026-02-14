@@ -9,9 +9,11 @@ export default defineConfig({
     launchOptions: {
       args: [
         "--no-sandbox",
+        "--disable-setuid-sandbox",
         "--disable-gpu",
         "--disable-dev-shm-usage",
         "--disable-software-rasterizer",
+        "--no-zygote",
       ],
     },
   },

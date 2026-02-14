@@ -16,3 +16,7 @@
 - [x] Build initial prototype — data (15 event templates, 5 regions, 3 difficulties)
 - [x] Build initial prototype — UI (MainMenu, GameScreen, WorldMap, TopBar, EventPanel, EventCard, EventDetail, RegionPanel, TimeBar, GameOverScreen)
 - [x] npm run check passes (typecheck + lint + build + test)
+- [x] Fix Playwright config for gVisor (--no-zygote, --disable-setuid-sandbox)
+- [x] E2E tests pass
+- [x] Add Cloudflare Pages deployment (wrangler.toml + wrangler dep)
+- [x] Visual QA — screenshots confirm menu, game, and events all render correctly
