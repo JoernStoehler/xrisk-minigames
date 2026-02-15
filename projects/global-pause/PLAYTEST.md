@@ -1,6 +1,6 @@
-# Playtest Guide — Feedback-to-Mechanics Mapping
+# Playtest Guide — V2 Engine
 
-How to connect player feedback to specific knobs in the engine. Organized by what the player might *say*, not by what the engine does.
+How to connect player feedback to specific knobs in the v2 engine. Organized by what the player might *say*, not by what the engine does. See DESIGN.md for state shape and reducer list.
 
 ---
 
@@ -8,95 +8,91 @@ How to connect player feedback to specific knobs in the engine. Organized by wha
 
 **Which loss condition?** This is the most important diagnostic question.
 
-### Losing to ASI (algorithmic progress hits 100)
+### Losing to ASI (frontier hits 100)
 
-The player can't keep algorithmic progress in check. Levers:
+The frontier is advancing faster than the player can buy time. Levers:
 
-| Knob | Where | Current (Normal) | Effect of lowering |
-|------|-------|-----------------|-------------------|
-| `algorithmicProgressRate` | difficulties.ts | 0.08/week | Directly slows the clock. Most impactful knob. |
-| Catastrophe effects (algorithmic) | state.ts `getDefaultCatastropheEffects` | +5 to +15 | Reduces punishment for missed events |
-| `eventFrequency` | difficulties.ts | 0.8 | Fewer events = fewer potential catastrophes |
-| Event `urgencyWeeks` | events.ts per template | 3-10 | Longer timers = more time to respond |
+| Knob | Reducer | Effect of lowering |
+|------|---------|-------------------|
+| Frontier base advance rate | `frontierAdvance` | Directly slows the clock. Most impactful. |
+| Frontier modifiers from history (breakthroughs, leaked research) | `frontierAdvance` | Reduces punishment for missed events. |
+| Event spawn rates for capability events | `eventGeneration` producers | Fewer capability crises = less frontier acceleration. |
+| Event urgency windows (`timeoutWeek - createdWeek`) | Event templates | More weeks to respond before `onTimeout` fires. |
 
-**Common pattern:** Player ignores events because they're overwhelmed, catastrophes spike progress, game ends. Fix: lower event frequency OR increase urgency windows so events don't expire while unresolved ones are queued.
+**Common pattern:** Player ignores events, `onTimeout` effects spike frontier, game ends. Fix: widen timeout windows or soften `onTimeout` effects.
 
-### Losing to treaty collapse (3+ regions < 15 cooperation)
+### Losing to treaty collapse
 
-Regional cooperation is eroding. Levers:
+Political actors become hostile enough that IAS is effectively dead. Levers:
 
-| Knob | Where | Current (Normal) | Effect |
-|------|-------|-----------------|--------|
-| Starting cooperation | difficulties.ts | 65 | Higher start = more runway |
-| Catastrophe cooperation effects | state.ts | -5 to -30 | Reduce to slow erosion |
-| Region selection weights | events.ts `pickRegion` | `max(1, 100 - coop)` | Flatten weighting to reduce death spiral |
-| Cooperation loss on response failure | events.ts per response | -3 to -20 | Reduce to make failed attempts less punishing |
+| Knob | Reducer | Effect |
+|------|---------|--------|
+| Starting political valence/trust | Initial state | Higher = more runway before hostility |
+| Political drift speed | `politicalUpdate` | Slower drift = more time to course-correct |
+| Opinion → political coupling strength | `politicalUpdate` | Weaker coupling = politicians less responsive to angry public |
+| US-China bilateral tension effects | `politicalUpdate` | Reduce geopolitical spillover into IAS |
 
-**Common pattern:** One region spirals — gets hit repeatedly, cooperation drops, attracts more events. Fix: dampen the inverse-cooperation weighting (e.g., `max(10, 80 - coop)` instead of `max(1, 100 - coop)`) or add passive cooperation recovery.
+**Common pattern:** One government spirals hostile — low valence attracts hostile events, which lower valence further. Fix: dampen the feedback loop (add inertia/cooldown to political drift) or make player decisions that improve valence more impactful.
 
-### Losing to public revolt (support hits 0)
+### Losing on time (maxWeeks without enough safety milestones)
 
-Global support decays faster than the player can rebuild it. Levers:
+Player is stable but not progressing toward win condition. Levers:
 
-| Knob | Where | Current (Normal) | Effect |
-|------|-------|-----------------|--------|
-| `globalSupportDecay` | difficulties.ts | 0.12/week | Most direct lever |
-| Starting support | state.ts | 70 (hardcoded) | Higher start = more runway |
-| Support gains from successful responses | events.ts per response | +2 to +12 | Increase to reward good play |
-| Public backlash weight modifier | events.ts | 1.8× when support < 50 | Lower to reduce death spiral |
+| Knob | Where | Effect |
+|------|-------|--------|
+| Number of milestones required to win | Win condition | Fewer = easier |
+| Safety milestone event frequency | Event producers | More opportunities to earn milestones |
+| Milestone prerequisites | Event templates | Simpler chains = less luck-dependent |
 
-**Common pattern:** Player doesn't prioritize support-affecting events (political pressure, public backlash), support silently erodes, then cascading backlash events finish it off. Fix: reduce decay rate OR make support more visible/alarming before it's critical.
+**Common pattern:** Player manages crises well but never triggers milestone events because they require specific state conditions. Fix: broaden conditions or increase base spawn rates.
 
 ---
 
 ## "The game is too easy" / "I won without trying"
 
-**Probable cause:** Safety research is progressing too fast relative to threats.
+**Probable cause:** Milestones arrive too fast, or threats aren't escalating.
 
-| Knob | Where | Current (Normal) | Effect of lowering |
-|------|-------|-----------------|-------------------|
-| `safetyResearchBaseRate` | difficulties.ts | 0.08/week | Directly slows win path |
-| Safety milestone event weight | events.ts | base 4, 1.5× when >30% | Reduce frequency of bonus progress |
-| Safety milestone event effects | events.ts | +3 to +5 | Reduce bonus per event |
-| `algorithmicProgressRate` | difficulties.ts | 0.08/week | Raising this increases pressure |
+| Knob | Where | Effect of changing |
+|------|-------|-------------------|
+| Milestone event frequency | Event producers | Reduce to slow win path |
+| Milestone prerequisites | Event templates | Add conditions (budget investment, opinion support) |
+| Frontier base rate | `frontierAdvance` | Increase to tighten the race |
+| Opinion drift toward apathy | `opinionDrift` | Increase salience decay so support erodes |
+| Budget squeeze | `budgetAccrual` | Reduce income so player can't fund everything |
 
-**Common pattern:** Player handles events routinely, funds safety at level 2-3, never feels threatened. Fix: increase algorithmic progress rate (makes the race tighter) or reduce safety base rate (forces reliance on events).
+**Common pattern:** Player handles events routinely, milestones arrive on schedule, never feels threatened. Fix: increase frontier rate (tighter race) or make milestones require active investment (budget commitment, political capital).
 
 ---
 
 ## "The game feels unfair" / "I got screwed by RNG"
 
-Multiple possible causes:
+### "I made the right choice and it went badly"
 
-### "I made the right choice and it failed"
-
-Success probability is visible but outcomes are random. A 70% success can fail 3 times in a row (~2.7% chance, but feels terrible).
+Decision outcomes in v2 are deterministic (`decision.apply` is a pure function), but some decisions have probabilistic follow-ups via `followUp` spawners. If those feel random:
 
 **Levers:**
-- Raise base success probabilities across the board
-- Reduce the penalty for failure effects (so failing isn't catastrophic)
-- Add a "bad luck protection" mechanism (e.g., +5% cumulative boost per consecutive failure)
-- Currently not implemented: could add `failStreak` counter to state
+- Make follow-up probabilities visible in decision descriptions
+- Reduce variance in follow-up effects
+- Add "bad luck protection" (consecutive negative follow-ups reduce probability of next one)
 
-### "Events spawned in my weakest region repeatedly"
+### "Events keep spawning that I can't handle"
 
-Region selection is weighted by inverse cooperation. This is by design (weak regions attract problems), but feels like bullying.
-
-**Levers:**
-- Flatten region selection weights (see treaty collapse section above)
-- Add a "cooldown" so the same region can't be targeted twice in a row
-- Currently not implemented: would need per-region cooldown tracking
-
-### "I didn't have enough PC to respond to anything"
-
-PC starvation cascade: funding drains PC, event comes, can't afford response, catastrophe, lose more PC.
+Event producers read state to compute spawn probability. If the player is struggling, certain producers may fire more often (realistic — struggling agencies get more crises).
 
 **Levers:**
-- Increase `politicalCapitalRegen`
-- Lower funding PC cost (`fundingLevel × 0.5` — reduce the multiplier)
-- Lower event response costs across the board
-- Add a "minimum PC floor" (e.g., never drop below 5)
-- Make some events cost 0 PC to respond to (currently cheapest is 5)
+- Add cooldown logic to producers (can't fire within N weeks of previous firing)
+- Cap maximum active events on the map
+- Reduce spawn probability coupling to negative state (flatten the death spiral)
+
+### "I ran out of budget for everything"
+
+Budget starvation cascade: political actor cuts funding → can't respond to events → more crises → political actor gets more hostile → less funding.
+
+**Levers:**
+- Increase budget accrual base rate
+- Add minimum budget floor (emergency funding)
+- Make some decisions cost 0 budget (diplomatic options, public appeals)
+- Reduce political hostility → budget coupling
 
 ---
 
@@ -104,154 +100,112 @@ PC starvation cascade: funding drains PC, event comes, can't afford response, ca
 
 ### "I'm just waiting for events"
 
-The game has quiet periods (especially early game, or when luck produces several 0-event weeks in a row via Poisson variance).
+Quiet periods when producers don't fire. More likely early game when state is moderate.
 
 **Levers:**
-- Increase `eventFrequency` (more events per week)
-- Increase minimum event count (e.g., guarantee at least 1 event every 3 weeks)
-- Start the game unpaused at 2x speed instead of paused
-- Reduce Poisson variance by using a different distribution
+- Increase base spawn rates in event producers
+- Guarantee minimum 1 event every N weeks
+- Add "routine operations" events that are low-stakes but keep the player engaged
+- Start the game at 2x speed
 
 ### "All events feel the same"
 
-Template pool (15 templates) may be too small for long games. Players see the same headlines.
+Template pool needs variety. v2's richer state enables more varied events.
 
 **Levers:**
 - Add more event templates (target: 25-30)
-- Add headline variants per template
-- Add region-specific flavor text
+- Use opinion distribution for variant text (protests look different at 60% vs 90% salience)
+- Political actor state drives event framing (US-funded event vs. China-hostile event)
+- Region-specific flavor
 
 ### "My choices don't seem to matter"
 
-If success/failure effects are too small, or if the player can't perceive the impact.
+The player can't see the impact of their decisions.
 
 **Levers:**
-- Increase success effect magnitudes (currently +3 to +12)
-- Add visual feedback for state changes (cooperation color shift, support number flash)
-- Show "what happened" after each response (outcome + effects)
+- Show opinion shift after decisions (poll result animation)
+- Show political actor reaction (news ticker entry)
+- Make decision effects larger and more distinct
+- Ensure each decision in a pair has meaningfully different consequences
+
+---
+
+## "I don't understand what's happening"
+
+This is the most important feedback category for the target audience (people who don't yet appreciate x-risk).
+
+### "What are these numbers?"
+
+v2 shows polls instead of raw numbers. If players still don't understand:
+
+**Levers:**
+- Reduce visible information (show 2-3 polls, not all state)
+- Use natural language summaries ("Public support is slipping" not "valence: 0.3")
+- Tutorial difficulty should introduce concepts one at a time
+
+### "What am I supposed to do?"
+
+The player doesn't understand their role or goals.
+
+**Levers:**
+- Opening sequence should establish: you run IAS, frontier is advancing, your job is to buy time for safety research
+- Milestone tracker should be visually prominent (this is your win condition)
+- First few events should have obvious good/bad options
+
+### "Why did I lose?"
+
+The loss condition wasn't clearly signaled.
+
+**Levers:**
+- Game over screen should explain which condition triggered and show the trajectory
+- Warning system (flashing indicators) before loss conditions become critical
+- "Last 5 events" recap on game over
 
 ---
 
 ## "The game is too fast" / "I can't keep up"
 
 **Levers:**
-- Default to a slower starting speed (currently starts paused)
-- Auto-pause on new event (not just on modal open)
-- Increase event urgency windows (more weeks before catastrophe)
+- Auto-pause on decision events (already in v1, keep in v2)
+- Increase event urgency windows
 - Reduce event frequency
+- Add visual cue when events need attention (pulsing bubble)
 
-**Note:** If this feedback comes from mobile players specifically, the issue may be touch target size or modal opening speed rather than game speed.
+### Mobile-specific
+- Touch targets may be too small
+- Modal opening speed may lag
+- Consider tap-and-hold for event preview vs. tap to open
 
 ---
 
 ## "The game is too slow" / "I want it to go faster"
 
 **Levers:**
-- Add a 8x speed option (125ms interval)
-- Auto-pop all poppable events at high speed
-- Skip animation delays
-- Increase the pop-able threshold (from 5 PC to 8-10 PC, so more events auto-resolve)
+- Add 8x speed option
+- Auto-pop minor events at high speed
+- Skip animations at high speed
+- Consolidate low-stakes events into batch notifications
 
 ---
 
-## "I don't understand what's happening" / "The numbers are confusing"
+## Key Feedback Loops to Monitor
 
-**Levers:**
-- Reduce visible numbers (current status overlay shows 4 values)
-- Replace numbers with visual indicators (cooperation as map color already does this)
-- Add a brief tutorial overlay on first game
-- Show tooltips on first occurrence of each event type
+These are the v2 feedback loops that can spiral. Each should have damping built in.
 
-**Note:** The target audience (people who don't appreciate x-risk) likely has low tolerance for complexity. If this feedback is common, the game needs to communicate state through feel and visuals rather than numbers.
+1. **Opinion → Politics → Budget → Capability → Opinion**: Low public support → hostile government → budget cuts → can't respond → more crises → lower support. **Damping:** minimum budget floor, budget-free decision options.
 
----
+2. **Media → Opinion → Media**: Media covers what gets readership → negative coverage lowers salience/valence → lower support generates more negative coverage. **Damping:** media attention span (moves on after N weeks), positive coverage when salience is high and events resolve well.
 
-## "I keep losing to the same thing"
+3. **Frontier → Events → Frontier**: Higher frontier → more capability events → frontier advances faster. **Damping:** cap on frontier-accelerating events per period, player decisions that slow frontier.
 
-Map which loss condition is most common. Expected distribution:
-
-- **Tutorial:** Should almost always win. If losing, the Tutorial rates are wrong.
-- **Normal:** Should be ~50-50 win/loss for engaged players. Most losses should be ASI (the "clock ran out" feeling). Treaty collapse and public revolt should be rare.
-- **Realistic:** Should be ~10-20% winnable. Multiple loss conditions should feel plausible. This difficulty communicates "the problem might actually be unsolvable."
-
-If the distribution doesn't match:
-- Too many ASI losses → `algorithmicProgressRate` too high or safety rate too low
-- Too many treaty losses → catastrophe cooperation effects too harsh or region targeting too punishing
-- Too many support losses → `globalSupportDecay` too high or support recovery opportunities too rare
-- Never losing to treaty/support → those systems are too lenient, reduce starting values or increase decay
+4. **Political trust → Event variants → Trust**: Low trust → controlling/hostile government events → player loses autonomy → trust erodes further. **Damping:** trust recovery events, diplomatic decisions.
 
 ---
 
-## Specific Mechanics and Their Feel
+## Expected Win/Loss Distribution by Difficulty
 
-### Funding allocation (0-3 slider)
+- **Tutorial:** ~90% win rate. Losses should feel like clear mistakes, not bad luck.
+- **Normal:** ~40-50% win rate for engaged players. Most losses should be ASI (frontier) — "the clock ran out." Treaty collapse and time-out should be rare (~10% of losses each).
+- **Realistic:** ~10-20% win rate. Multiple loss conditions should feel plausible. This communicates the thesis: "the problem might be unsolvable."
 
-**What it should feel like:** A constant dilemma. "I need this PC for events but I also need to fund safety."
-
-**If it feels like a set-and-forget:** The funding PC cost (0.5 × level) is too cheap relative to regen. Increase cost or reduce regen.
-
-**If it feels like funding is never worth it:** Safety base rate is too low. The player can't see the benefit of funding because progress is glacial. Increase base rate or show projected completion date.
-
-### Inspector deployment
-
-**What it should feel like:** Strategic positioning. "Where do I expect trouble next?"
-
-**If inspectors feel useless:** The +10% success probability and +15 intel are too small to notice. Increase to +20% and +25.
-
-**If inspectors feel mandatory:** Every response requiring an inspector forces a specific play pattern. Reduce the number of inspector-requiring responses, or make non-inspector responses viable alternatives.
-
-### Pop-able bubbles
-
-**What it should feel like:** Satisfying routine maintenance. Pop pop pop while watching for the big decision bubbles.
-
-**If popping feels meaningless:** The auto-resolved responses have too-low success probability. The player pops but nothing good happens.
-
-**If everything is poppable:** The 5 PC threshold is too generous. Raise it to 3, or make urgency the only criterion.
-
-**If nothing is poppable:** The threshold is too strict. Lower to 8, or add more low-cost response options to event templates.
-
-### News ticker
-
-**What it should feel like:** Atmospheric background noise that occasionally alerts you to events.
-
-**If it's ignored completely:** It's not providing useful information. Consider making it flash/highlight when red-urgency events appear.
-
-**If it's the primary info source:** The map bubbles aren't doing their job. Make bubbles more visually prominent.
-
-### Safety progress racing bar
-
-**What it should feel like:** The scoreboard. Glancing at it should tell you "am I winning or losing?"
-
-**If players don't understand it:** The dual-bar (green from left, red from right) is unclear. Consider separate bars, or a single bar that shows net position.
-
----
-
-## Balance Simulation Cheatsheet
-
-For back-of-envelope tuning without playtesting. All figures are Normal difficulty, max funding, no events.
-
-| Week | Safety | ASI | Support | Notes |
-|------|--------|-----|---------|-------|
-| 0 | 0% | 0% | 70 | Game start |
-| 52 (1yr) | 4.2% | 4.2% | 63.8 | Neck and neck |
-| 104 (2yr) | 8.3% | 8.3% | 57.5 | Support eroding |
-| 260 (5yr) | 20.8% | 20.8% | 38.8 | Support getting low |
-| 389 | 31.1% | 31.1% | 23.3 | |
-| 520 (10yr) | 41.6% | 41.6% | 7.6 | Support nearly dead |
-| 583 | 46.6% | 46.6% | 0.0 | **Support loss (passive only)** |
-| 833 | 66.6% | 66.6% | — | (would be dead already) |
-| 1040 (20yr) | 83.2% | 83.2% | — | **Time runs out** |
-
-**Key takeaway:** In a no-events vacuum, Normal is a perfect tie at 83% each — but support kills the player at week 583 first. Events break this symmetry: successful responses slow ASI and boost support, catastrophes accelerate ASI and erode support. The game is decided by event handling quality.
-
-**For Realistic** (same format, no events):
-
-| Week | Safety | ASI | Support | Notes |
-|------|--------|-----|---------|-------|
-| 0 | 0% | 0% | 70 | |
-| 260 (5yr) | 15.6% | 31.2% | 23.2 | ASI pulling ahead |
-| 389 | 23.3% | 46.7% | 0.0 | **Support loss** |
-| 520 | 31.2% | 62.4% | — | |
-| 833 | 50.0% | 100% | — | **ASI loss** |
-
-Realistic is structurally harder: ASI progresses 2× faster than safety. Even with perfect event handling, the player needs the safety milestone events to close the gap. This communicates the thesis: "the problem might be unsolvable."
+If the distribution doesn't match, trace back through the feedback loops above to find which knob is miscalibrated.
