@@ -35,7 +35,7 @@ Generated via weighted random from template pool. Urgency timers: yellow -> oran
 ### Difficulty
 | | Tutorial | Normal | Realistic |
 |---|---------|--------|-----------|
-| Span | 5 years | 20 years | 20 years |
+| Span | 5 years | 10 years | 10 years |
 | Inspectors | 4 | 3 | 2 |
 | Events | Low freq | Medium | High freq |
 | Signals | Clear | Mixed | Noisy |
@@ -56,17 +56,18 @@ src/
     events.ts       # Event templates (~15 templates)
     regions.ts      # 5 regions: US, China, EU, Russia, Rest of World
     difficulties.ts # Tutorial/Normal/Realistic configs
-  components/       # UI
-    MainMenu.tsx    # Title + difficulty selection
-    GameScreen.tsx  # Main layout (regions + map + events + time)
-    WorldMap.tsx    # SVG world map with clickable regions + event markers
-    TopBar.tsx      # Resources display + funding controls
-    EventPanel.tsx  # Event list + detail view
-    EventCard.tsx   # Single event summary
-    EventDetail.tsx # Expanded event + response buttons
-    RegionPanel.tsx # 5 regions with cooperation/intel bars
-    TimeBar.tsx     # Date + speed controls
-    GameOverScreen.tsx
+  components/              # UI (mobile-first, Plague Inc-inspired)
+    MainMenu.tsx           # Title + difficulty selection
+    GameScreen.tsx         # Single-column layout (ticker, map, progress)
+    WorldMap.tsx           # SVG map with region coloring + event bubbles
+    MapBubble.tsx          # Pop-able and decision bubbles
+    EventModal.tsx         # Fullscreen decision modal (auto-pauses)
+    RegionOverlay.tsx      # Bottom-sheet region info + inspector controls
+    NewsTicker.tsx         # Scrolling news/flavor text
+    SafetyProgressBar.tsx  # Bottom bar: safety vs ASI racing progress
+    SpeedControls.tsx      # Floating speed buttons (||, >, >>, >>>)
+    StatusOverlay.tsx      # Floating HUD (PC, inspectors, support, funding)
+    GameOverScreen.tsx     # Win/loss with stats
 ```
 
 ### Key patterns

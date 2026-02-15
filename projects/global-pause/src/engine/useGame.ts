@@ -109,6 +109,24 @@ export function useGame() {
     [],
   );
 
+  // Auto-resolve event with cheapest affordable response
+  const popEvent = useCallback((eventId: string) => {
+    setState((prev) => {
+      const event = prev.activeEvents.find((e) => e.id === eventId);
+      if (!event || event.resolved) return prev;
+      // Find cheapest response the player can afford
+      const affordable = event.responses
+        .filter((r) => {
+          if (prev.resources.politicalCapital < r.politicalCapitalCost) return false;
+          if (r.requiresInspector && prev.resources.inspectorTeams <= 0) return false;
+          return true;
+        })
+        .sort((a, b) => a.politicalCapitalCost - b.politicalCapitalCost);
+      if (affordable.length === 0) return prev;
+      return respondToEvent(prev, eventId, affordable[0].type);
+    });
+  }, []);
+
   const deploy = useCallback((regionId: RegionId) => {
     setState((prev) => deployInspector(prev, regionId));
   }, []);
@@ -130,6 +148,7 @@ export function useGame() {
     startGame,
     restart,
     respond,
+    popEvent,
     deployInspector: deploy,
     recallInspector: recall,
     setSpeed: changeSpeed,

@@ -19,6 +19,7 @@ export default function App() {
     <GameScreen
       state={state}
       onRespond={game.respond}
+      onPopEvent={game.popEvent}
       onDeployInspector={game.deployInspector}
       onRecallInspector={game.recallInspector}
       onSetSpeed={game.setSpeed}
