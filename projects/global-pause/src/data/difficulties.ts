@@ -20,8 +20,8 @@ export const DIFFICULTIES: Record<string, DifficultyConfig> = {
   normal: {
     label: "Normal",
     description:
-      "10-year scenario. A pause is feasible but enforcement is the hard part.",
-    maxWeeks: 520, // 10 years
+      "20-year scenario. A pause is feasible but enforcement is the hard part.",
+    maxWeeks: 1040, // 20 years
     startingInspectorTeams: 3,
     startingPoliticalCapital: 60,
     startingIntelligence: 50,
@@ -36,8 +36,8 @@ export const DIFFICULTIES: Record<string, DifficultyConfig> = {
   realistic: {
     label: "Realistic",
     description:
-      "10-year scenario. Scarce resources, noisy signals, fast progress. Barely survivable.",
-    maxWeeks: 520, // 10 years
+      "20-year scenario. Scarce resources, noisy signals, fast progress. Barely survivable.",
+    maxWeeks: 1040, // 20 years
     startingInspectorTeams: 2,
     startingPoliticalCapital: 40,
     startingIntelligence: 35,
