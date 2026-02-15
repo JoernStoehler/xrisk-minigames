@@ -60,7 +60,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "The network has moved ~200 H100-equivalents over 6 months, using modified consumer electronics as cover.",
     baseWeight: 6,
-    minWeek: 26,
+    minWeek: 13,
     urgencyWeeks: 8,
     responses: [
       {
@@ -104,7 +104,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "A secretly constructed datacenter housing ~500 H100-equivalents, running prohibited training at 2e23 FLOP.",
     baseWeight: 8,
-    minWeek: 12,
+    minWeek: 6,
     urgencyWeeks: 5,
     responses: [
       {
@@ -200,7 +200,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "The company has been running distributed training across multiple sub-CCC clusters, exploiting the 16 H100-equivalent threshold loophole.",
     baseWeight: 7,
-    minWeek: 20,
+    minWeek: 10,
     urgencyWeeks: 5,
     responses: [
       {
@@ -243,7 +243,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "Lobbying funded primarily by former AI company executives and cloud computing providers seeking to resume large-scale inference services.",
     baseWeight: 8,
-    minWeek: 16,
+    minWeek: 8,
     urgencyWeeks: 6,
     responses: [
       {
@@ -340,7 +340,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "The facility is 18 months from producing AI-capable chips at 7nm. Funded by a sovereign wealth fund seeking AI capabilities independence.",
     baseWeight: 5,
-    minWeek: 30,
+    minWeek: 15,
     urgencyWeeks: 10,
     responses: [
       {
@@ -382,7 +382,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     ],
     catastropheEffects: { algorithmicProgress: 10, globalSupport: -5 },
     weightModifier: (s: GameState) =>
-      s.week > 100 ? 1.5 : 0.5,
+      s.week > 50 ? 1.5 : 0.5,
   },
 
   // === ALGORITHMIC BREAKTHROUGH ===
@@ -396,7 +396,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "The claims are verified. This fundamentally shifts the compute threshold required for dangerous capabilities. The CCC definition may need revision.",
     baseWeight: 4,
-    minWeek: 40,
+    minWeek: 20,
     urgencyWeeks: 3,
     responses: [
       {
@@ -442,7 +442,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "The provider developed a software layer that reports inference workloads while actually running prohibited training in time-sliced bursts.",
     baseWeight: 6,
-    minWeek: 20,
+    minWeek: 10,
     urgencyWeeks: 5,
     responses: [
       {
@@ -484,7 +484,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "Internal communications reveal this is primarily a negotiating tactic to obtain more favorable inspection terms, but hardliners are pushing for actual withdrawal.",
     baseWeight: 5,
-    minWeek: 40,
+    minWeek: 20,
     urgencyWeeks: 8,
     responses: [
       {
@@ -530,7 +530,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "Protest organizers include legitimate displaced workers, but funding traces back to AI company lobbying groups seeking to undermine the treaty.",
     baseWeight: 7,
-    minWeek: 20,
+    minWeek: 10,
     urgencyWeeks: 4,
     responses: [
       {
@@ -573,7 +573,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
       "Several operators are attempting to reclassify AI chips as general-purpose to avoid the CCC threshold declaration requirement.",
     baseWeight: 12,
     minWeek: 0,
-    maxWeek: 17, // 120 days = ~17 weeks
+    maxWeek: 9, // compressed timeline
     urgencyWeeks: 4,
     responses: [
       {
@@ -611,7 +611,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "A coordinated group is using a novel distributed training protocol that splits workloads across 50+ consumer-grade clusters, each below the 16 H100-equivalent threshold.",
     baseWeight: 5,
-    minWeek: 80,
+    minWeek: 40,
     urgencyWeeks: 4,
     responses: [
       {
@@ -659,7 +659,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "Combined with recent algorithmic efficiency gains, consumer hardware can now achieve in weeks what required datacenter-scale compute just years ago.",
     baseWeight: 3,
-    minWeek: 100,
+    minWeek: 50,
     urgencyWeeks: 3,
     responses: [
       {
@@ -707,7 +707,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     hiddenDescription:
       "Phase II clinical trials show a 40% improvement in complex reasoning tasks. This could accelerate the off-ramp timeline significantly.",
     baseWeight: 4,
-    minWeek: 60,
+    minWeek: 30,
     urgencyWeeks: 8,
     responses: [
       {
