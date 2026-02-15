@@ -35,7 +35,7 @@ Generated via weighted random from template pool. Urgency timers: yellow -> oran
 ### Difficulty
 | | Tutorial | Normal | Realistic |
 |---|---------|--------|-----------|
-| Span | 5 years | 10 years | 10 years |
+| Span | 5 years | 20 years | 20 years |
 | Inspectors | 4 | 3 | 2 |
 | Events | Low freq | Medium | High freq |
 | Signals | Clear | Mixed | Noisy |
