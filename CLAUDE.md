@@ -19,6 +19,7 @@ projects/<name>/       # Each sub-project is a self-contained web app
 projects/_template/    # Copy this to start a new project
 literature/            # Shared reference materials (see literature/CLAUDE.md)
 docs/recipes.md        # Copy-paste patterns (Workers, D1, LLM, image gen)
+.devcontainer/         # Local devcontainer config (see .devcontainer/CLAUDE.md)
 .claude/               # Hooks, settings
 ```
 
@@ -145,9 +146,21 @@ Update this file as you work. It persists across sessions.
 
 ---
 
-## Claude Code Web Environment
+## Local Devcontainer (Primary)
 
-CC Web has restricted network access and pre-installed tooling. Docs: https://code.claude.com/docs/en/claude-code-on-the-web
+Primary environment (~80% of work). Local devcontainer on Jörn's Ubuntu desktop.
+
+- **Rebuild:** `.devcontainer/host-devcontainer-rebuild.sh` (from host)
+- **VS Code tunnel:** `.devcontainer/host-vscode-tunnel.sh` (from host)
+- **First run in a project:** `npm install` (Playwright browsers + system deps pre-installed in image)
+- **Worktrees:** `.devcontainer/worktree-new.sh <path> <branch>` for multi-agent parallel work
+- **Playwright:** No special flags needed — Chromium runs normally in the devcontainer
+
+---
+
+## Claude Code Web Environment (Secondary)
+
+CC Web is a secondary/fallback environment (~20% of work). Has restricted network access and pre-installed tooling. Docs: https://code.claude.com/docs/en/claude-code-on-the-web
 
 - **Playwright pinned to v1.56.1** — do not upgrade
 - **No external URLs from browsers** — `ERR_TUNNEL_CONNECTION_FAILED`; test deployments from your own browser
@@ -177,7 +190,7 @@ CC Web has restricted network access and pre-installed tooling. Docs: https://co
 - Jörn doesn't see exact edit diffs in chat — mention and explain repo changes when he should be aware
 
 ### Session Scoping
-- Each CC Web session is typically scoped to one project
+- Each session is typically scoped to one project
 - Work within that project's directory
 - Read the project's `CLAUDE.md` and `TASKS.md` first
 - Before the session ends: report friction points, flag leftover tasks, note workflow improvements
