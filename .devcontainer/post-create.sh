@@ -33,15 +33,6 @@ curl -fsSL https://claude.ai/install.sh | bash
 # Install Playwright browser binary (system deps already in image)
 npx -y playwright install chromium
 
-# Verify worktrees mount exists (required for local env)
-WORKTREES_DIR="/workspaces/worktrees"
-if ! mountpoint -q "${WORKTREES_DIR}"; then
-  echo "ERROR: ${WORKTREES_DIR} is not mounted." >&2
-  echo "Local devcontainer requires bind mount configured in devcontainer.json." >&2
-  echo "Check that /srv/devworktrees/xrisk-minigames/worktrees/ exists on host." >&2
-  exit 1
-fi
-
 # Verify tools
 echo "code-tunnel: $(code-tunnel --version 2>/dev/null || echo 'not found')"
 echo "node: $(node -v 2>/dev/null || echo 'not found')"
