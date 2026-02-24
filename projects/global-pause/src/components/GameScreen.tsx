@@ -26,6 +26,7 @@ export function GameScreen({ state, onChoice }: GameScreenProps) {
 
       {/* Card area */}
       <SwipeCard
+        key={state.activeCard.templateId + "-" + state.turn}
         card={state.activeCard}
         onChoice={onChoice}
         onTiltChange={setTiltDirection}

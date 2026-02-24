@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { ActiveCard } from "../engine/types";
 import { useSwipe, type TiltDirection } from "../hooks/useSwipe";
 
@@ -13,19 +14,10 @@ export function SwipeCard({ card, onChoice, onTiltChange }: SwipeCardProps) {
       onSwipe: onChoice,
     });
 
-  // Sync tilt direction to parent
-  const prevTilt = { current: tiltDirection };
-  if (prevTilt.current !== tiltDirection) {
+  // Sync tilt direction to parent for resource bar previews
+  useEffect(() => {
     onTiltChange(tiltDirection);
-  }
-  // Also call on every render where it might have changed
-  // (useSwipe updates tiltDirection via setState, so this is fine)
-  if (tiltDirection !== "center") {
-    // Defer to avoid setState-during-render
-    queueMicrotask(() => onTiltChange(tiltDirection));
-  } else {
-    queueMicrotask(() => onTiltChange("center"));
-  }
+  }, [tiltDirection, onTiltChange]);
 
   // Option label opacity: proportional to drag offset
   const tiltThreshold = 30;
