@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "cli": "tsx src/cli.ts",
     "check": "npm run typecheck && npm run lint && npm run build && npm test",
     "setup:ccweb": "npx playwright install --with-deps chromium 2>/dev/null; npm install"
   },
@@ -38,6 +39,7 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
     "vitest": "^3.2.4",
+    "tsx": "^4.19.0",
     "wrangler": "^4.63.0"
   }
 }

@@ -1,44 +1,23 @@
 # Tasks
 
-## Current — V2 Engine Rearchitecture
+## Current
 
-See DESIGN.md for full spec. Migration is incremental — v1 UI stays working throughout.
-
-- [ ] New state shape + reducer skeleton (types.ts rewrite, tick() as reducer list, wire into useGame)
-- [ ] Port existing 15 event templates to producer/decision functions
-- [ ] Opinion system (Float64Array N=200, opinionDrift reducer, mediaDynamics reducer)
-- [ ] Political actors (usGov/chinaGov/media structs, politicalUpdate reducer, event variant selection)
-- [ ] Budget rework (free pool + project pools, budgetAccrual from political actors, projectExpiry)
-- [ ] Safety milestones (replace linear progress bar with discrete milestone tracker)
-- [ ] Event history (history[week] indexed array, replace flat eventLog)
-- [ ] New event templates exploiting richer state (~25 total)
-- [ ] UI updates (opinion polls display, milestone tracker, budget breakdown)
-- [ ] Difficulty rebalancing for new mechanics
-
-## Open Design Questions (need Jörn's input)
-- [ ] China gov: how much does US-China bilateral tension drive gameplay?
-- [ ] Safety milestones: what are they, how many to win?
-- [ ] Opinion drift parameters: convergence speed, media influence strength
-- [ ] Budget income model: flat rate × political state, or annual review events, or both?
-- [ ] Treaty collapse condition in new model
-- [ ] Difficulty config differences for Tutorial/Normal/Realistic
-
-## Parked (from v1, revisit after v2)
-- [ ] Improve world map visuals (more recognizable continent shapes)
-- [ ] Sound effects / ambient audio (optional)
+- [ ] Swipe UX polish (test on real mobile device, tune thresholds/velocity)
+- [ ] Card content: replace throwaway cards with real x-risk scenario cards (needs Jörn's domain input)
+- [ ] Tune resource deltas for balanced ~20-30 turn runs
+- [ ] Card pool dynamics: add more history-triggered chains and degraded variants
+- [ ] Death messages: write more specific/varied messages per failure mode
 
 ## Done
-- [x] Define project concept and specs in CLAUDE.md
-- [x] Build initial prototype — engine (types, rng, state, events, useGame)
-- [x] Build initial prototype — data (15 event templates, 5 regions, 3 difficulties)
-- [x] Build initial prototype — UI (MainMenu, GameScreen, WorldMap, TopBar, EventPanel, EventCard, EventDetail, RegionPanel, TimeBar, GameOverScreen)
-- [x] npm run check passes (typecheck + lint + build + test)
-- [x] Fix Playwright config for gVisor (--no-zygote, --disable-setuid-sandbox)
-- [x] E2E tests pass
-- [x] Add Cloudflare Pages deployment (wrangler.toml + wrangler dep)
-- [x] Visual QA — screenshots confirm menu, game, and events all render correctly
-- [x] Mobile UI redesign — Plague Inc-inspired map-centric layout
-- [x] Difficulty rebalancing — Normal/Realistic compressed from 20yr to 10yr with doubled rates
-- [x] Event timeline compression — halved minWeek values for compressed timelines
-- [x] DESIGN.md and PLAYTEST.md for v1 engine
-- [x] V2 engine design discussion — state shape, reducer architecture, political actors, opinion model
+
+- [x] V1 prototype (RTS/map style) — scrapped, UX failed on mobile
+- [x] V2 engine design discussion — concepts preserved, UX pivoted to Reigns-style
+- [x] Delete old code, rewrite CLAUDE.md for new direction
+- [x] Engine: types, state transitions, card pool draw (pure functions, no React dep)
+- [x] Throwaway card content (19 templates) + death messages (8)
+- [x] CLI playtest tool (npm run cli — headless, agent-friendly)
+- [x] Swipe UX (useSwipe hook, pointer events, CSS transforms, tap fallback)
+- [x] UI components (TitleScreen, GameScreen, SwipeCard, ResourceDisplay, ResourceBar, DeathScreen)
+- [x] App wiring + npm run check passes (typecheck + lint + build + 7 unit tests)
+- [x] E2E smoke tests (4 tests: title, game, choice, death+restart)
+- [x] Visual QA — mobile screenshots confirm all screens render correctly

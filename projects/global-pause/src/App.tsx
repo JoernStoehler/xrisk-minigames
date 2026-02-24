@@ -1,29 +1,24 @@
 import { useGame } from "./engine/useGame";
-import MainMenu from "./components/MainMenu";
-import GameScreen from "./components/GameScreen";
-import GameOverScreen from "./components/GameOverScreen";
+import { TitleScreen } from "./components/TitleScreen";
+import { GameScreen } from "./components/GameScreen";
+import { DeathScreen } from "./components/DeathScreen";
 
 export default function App() {
-  const game = useGame();
-  const { state } = game;
+  const { state, startGame, choose, restart } = useGame();
 
-  if (state.phase === "menu") {
-    return <MainMenu onStart={game.startGame} />;
+  if (state.phase === "title") {
+    return <TitleScreen onStart={startGame} />;
   }
 
-  if (state.phase === "won" || state.phase === "lost") {
-    return <GameOverScreen state={state} onRestart={game.restart} />;
+  if (state.phase === "dead" && state.death) {
+    return (
+      <DeathScreen
+        death={state.death}
+        turnsSurvived={state.turn}
+        onRestart={restart}
+      />
+    );
   }
 
-  return (
-    <GameScreen
-      state={state}
-      onRespond={game.respond}
-      onPopEvent={game.popEvent}
-      onDeployInspector={game.deployInspector}
-      onRecallInspector={game.recallInspector}
-      onSetSpeed={game.setSpeed}
-      onSetFunding={game.setSafetyFunding}
-    />
-  );
+  return <GameScreen state={state} onChoice={choose} />;
 }
