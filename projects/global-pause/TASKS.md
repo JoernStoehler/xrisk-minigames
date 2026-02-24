@@ -4,9 +4,8 @@
 
 - [ ] Swipe UX polish (test on real mobile device, tune thresholds/velocity)
 - [ ] Card content: replace throwaway cards with real x-risk scenario cards (needs Jörn's domain input)
-- [ ] Tune resource deltas for balanced ~20-30 turn runs
-- [ ] Card pool dynamics: add more history-triggered chains and degraded variants
-- [ ] Death messages: write more specific/varied messages per failure mode
+- [ ] More history-triggered chains (un-speech promises, hiring-spree consequences)
+- [ ] More degraded variant pairs (low-funding, low-leverage variants)
 
 ## Done
 
@@ -21,3 +20,6 @@
 - [x] App wiring + npm run check passes (typecheck + lint + build + 7 unit tests)
 - [x] E2E smoke tests (4 tests: title, game, choice, death+restart)
 - [x] Visual QA — mobile screenshots confirm all screens render correctly
+- [x] Balance tuning: rebalanced deltas, added 10 cards (29 total), 6/8 death types reachable
+- [x] Multiple death messages (3 per cause, 24 total) with turn-based selection
+- [x] BALANCE.md — documented tuning process and current balance state

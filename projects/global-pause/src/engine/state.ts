@@ -65,17 +65,19 @@ export function checkDeath(state: GameState): DeathInfo | null {
   for (const key of RESOURCE_KEYS) {
     const value = state.resources[key];
     if (value <= 0) {
+      const msgs = DEATH_MESSAGES[key].depleted;
       return {
         resource: key,
         extreme: "depleted",
-        message: DEATH_MESSAGES[key].depleted,
+        message: msgs[state.turn % msgs.length],
       };
     }
     if (value >= 100) {
+      const msgs = DEATH_MESSAGES[key].overloaded;
       return {
         resource: key,
         extreme: "overloaded",
-        message: DEATH_MESSAGES[key].overloaded,
+        message: msgs[state.turn % msgs.length],
       };
     }
   }
