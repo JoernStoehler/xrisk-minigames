@@ -31,23 +31,21 @@ export function SwipeCard({ card, onChoice, onTiltChange }: SwipeCardProps) {
     Math.max(0, (offsetX - tiltThreshold) / 60),
   );
 
-  const cardColor = card.color || "#4A90D9";
-
   return (
-    <div className="flex flex-col items-center flex-1 relative justify-center">
-      {/* Card back — visible behind current card like Reigns deck */}
-      <div className="absolute w-[82%] max-w-[310px] rounded-lg overflow-hidden top-[52%] -translate-y-1/2 h-[92%]">
-        <div className="w-full h-full bg-[#1A3D2E] flex flex-col items-center justify-around py-8">
-          <FleurDeLis />
-          <FleurDeLis />
-          <FleurDeLis />
-        </div>
+    <div className="flex flex-col items-center flex-1 relative justify-center px-4">
+      {/* Card back — peeks out behind card, like Reigns deck stack */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[82%] max-w-[330px] rounded-lg overflow-hidden bg-[#1A3D2E] flex flex-col items-center justify-center gap-12 py-8"
+        style={{ height: "calc(100% - 16px)" }}
+      >
+        <FleurDeLis />
+        <FleurDeLis />
+        <FleurDeLis />
       </div>
 
       {/* Main swipeable card */}
       <div
         ref={cardRef}
-        className={`relative w-[85%] max-w-[340px] flex flex-col rounded-lg overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.5)] ${
+        className={`relative w-full max-w-[340px] flex flex-col rounded-lg overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.5)] ${
           !isExiting ? "animate-card-enter" : ""
         }`}
         style={style}
@@ -60,11 +58,8 @@ export function SwipeCard({ card, onChoice, onTiltChange }: SwipeCardProps) {
           </p>
         </div>
 
-        {/* Portrait area — bold card color, character fills it */}
-        <div
-          className="relative flex items-end justify-center overflow-hidden"
-          style={{ backgroundColor: cardColor, aspectRatio: "5/6" }}
-        >
+        {/* Portrait area — image fills entirely (bg color baked into image) */}
+        <div className="relative overflow-hidden">
           {/* Choice label overlay — appears on swipe like Reigns */}
           {leftOpacity > 0 && (
             <div
@@ -83,10 +78,7 @@ export function SwipeCard({ card, onChoice, onTiltChange }: SwipeCardProps) {
             </div>
           )}
 
-          {/* Portrait — large, positioned at bottom of card area */}
-          <div className="translate-y-2">
-            <SpeakerPortrait speaker={card.speaker} size={280} />
-          </div>
+          <SpeakerPortrait speaker={card.speaker} />
         </div>
 
         {/* Speaker name — tan footer bar */}
