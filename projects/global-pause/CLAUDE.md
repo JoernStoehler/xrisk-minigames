@@ -84,12 +84,39 @@ src/
 
 ## Design Rules
 
-- Warm card-game aesthetic — cream background (#F5F0E8), white cards, colored headers per speaker
+**Reference:** Reigns (Nerial, 2016). The gold standard for card-swipe games.
+
+**Color model — dark background, light card:**
+- Background: dark warm brown/charcoal (#2A2118 range) — the card pops as a physical object
+- Card face: warm off-white/cream (#FFFDF7) — NOT pure white
+- This contrast model is fundamental to Reigns' feel. Light-on-light kills card presence.
+
+**Card proportions:**
+- Card fills ~70-75% of screen width, ~55-60% of screen height
+- Generous horizontal margins (~12-15% each side)
+- Card is the dominant visual element — everything else is secondary
+
+**Character portraits:**
+- CSS geometric portraits per speaker: colored circle/shape backgrounds with simple geometric features
+- Flat-shaded, bold, distinctive silhouettes (inspired by Reigns' Tom Whalen-esque style)
+- Portrait occupies upper ~40% of card body — the visual anchor
+- Each speaker instantly recognizable by color + shape
+
+**Typography:**
 - Inter font (Google Fonts), not monospace
-- Per-resource bar colors: Trust=blue, Funding=amber, Intel=violet, Leverage=red
-- Speaker emoji portraits on each card (SPEAKER_PORTRAITS map in SwipeCard.tsx)
+- Speaker name: small, uppercase, bold, wide tracking (header label)
+- Dialogue text: medium weight, standard case, generous line-height, centered
+- Choice labels: smaller, bold, fade in proportionally to swipe offset
+
+**Resource bars:**
+- Per-resource colors: Trust=blue, Funding=amber, Intel=violet, Leverage=red
+- Slim vertical bars, compact row at top of screen
+- Preview arrows on tilt (small ↑/↓, large ↑↑/↓↓)
+
+**Layout:**
 - Mobile-first (portrait, touch targets ≥44px)
-- Card dominates the viewport — centered between resource bars and bottom buttons
+- Card centered between resource bars (top) and turn counter (bottom)
+- Minimal dead space — card dominates
 - ~2 minute runs, highly replayable
 
 ## Playtesting
@@ -118,4 +145,71 @@ The core mechanic is the drag/swipe interaction. Automated checks (typecheck, li
 
 1. **Drag E2E test passes** (`e2e/drag.spec.ts`) — simulates pointer drag, verifies tilt direction propagates to resource bar previews, verifies swipe commit advances the game
 2. **Card re-mount on new card** — the SwipeCard key must change when activeCard changes, otherwise drag state leaks between cards and enter animation doesn't fire
-3. **Visual QA at mobile viewport** — Playwright screenshot at 390×844, check card layout, bar visibility, button touch targets
+3. **Visual QA at mobile viewport** — follow the Visual QA Process below
+
+### Visual QA Process (reusable)
+
+**Purpose:** Evaluate visual quality against the Reigns reference. Run this after ANY visual change. Use a BACKGROUND subagent — never block the main conversation.
+
+**Step 1 — Take screenshots** (Bash subagent, background):
+```bash
+cd /workspaces/xrisk-minigames/projects/global-pause
+npm run dev &
+sleep 3
+# Title screen
+npx playwright screenshot --viewport-size="390,844" http://localhost:5173 /tmp/vqa-title.png
+# Game screen (need a script for click interaction)
+node -e "
+const pw = require('playwright');
+(async () => {
+  const b = await pw.chromium.launch();
+  const p = await b.newPage();
+  await p.setViewportSize({width:390,height:844});
+  await p.goto('http://localhost:5173');
+  await p.click('text=Take Office');
+  await p.waitForTimeout(800);
+  await p.screenshot({path:'/tmp/vqa-game.png'});
+  // Tilt right
+  const card = p.locator('[class*=card-enter]').first();
+  const box = await card.boundingBox();
+  if (box) {
+    const cx = box.x+box.width/2, cy = box.y+box.height/2;
+    await p.mouse.move(cx,cy); await p.mouse.down();
+    await p.mouse.move(cx+60,cy,{steps:10});
+    await p.waitForTimeout(200);
+    await p.screenshot({path:'/tmp/vqa-tilt.png'});
+    await p.mouse.move(cx,cy,{steps:5}); await p.mouse.up();
+  }
+  await b.close();
+})();
+"
+```
+
+**Step 2 — QA evaluation** (general-purpose subagent, background). Use this prompt template:
+```
+You are evaluating a Reigns-style card game's visual quality. Reference: Reigns (2016) by Nerial.
+
+Look at these screenshots: /tmp/vqa-title.png, /tmp/vqa-game.png, /tmp/vqa-tilt.png
+
+Score each dimension 1-10 against Reigns quality:
+1. Card presence: Does the card dominate the viewport? (~70-75% width, ~55-60% height)
+2. Card-as-object: Does the card feel like a physical object? (contrast with bg, shadow, materiality)
+3. Character portraits: Distinctive, recognizable, emotional connection?
+4. Color harmony: Do all colors feel like the same world?
+5. Dead space: Is space used intentionally? No wasted gaps?
+6. Typography: Clean hierarchy, readable, not competing for attention?
+7. Resource bars: Readable at a glance, not distracting?
+8. Overall polish: Would this feel at home on the App Store?
+
+For each score <7, describe the specific fix needed.
+Give an overall score and list the top 3 highest-impact improvements.
+```
+
+**Step 3 — Iterate** until all dimensions score ≥7 and overall ≥8.
+
+**Process rules:**
+- ALWAYS use background subagents for screenshots and QA evaluation
+- NEVER ask the user to be your QA tester — they are not a $1k/h visual tester
+- Design changes need a written spec BEFORE implementation (update Design Rules above)
+- After implementing, QA subagent evaluates. Iterate until quality bar is met.
+- The quality bar is EXCELLENT, not adequate

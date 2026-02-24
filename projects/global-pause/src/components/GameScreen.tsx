@@ -33,7 +33,7 @@ export function GameScreen({ state, onChoice }: GameScreenProps) {
       />
 
       {/* Turn counter */}
-      <div className="text-center text-isia-muted text-xs font-semibold py-3">
+      <div className="text-center text-isia-muted/60 text-xs font-semibold py-3">
         Decision #{state.turn + 1}
       </div>
     </div>

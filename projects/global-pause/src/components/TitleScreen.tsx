@@ -15,7 +15,7 @@ export function TitleScreen({ onStart }: TitleScreenProps) {
         </div>
       </div>
 
-      <p className="text-isia-muted text-sm max-w-xs mb-12 leading-relaxed">
+      <p className="text-isia-muted/70 text-sm max-w-xs mb-12 leading-relaxed">
         Enforce the international ban on superintelligence development.
         Every decision has consequences. Keep the balance — or lose everything.
       </p>

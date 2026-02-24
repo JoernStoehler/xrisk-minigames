@@ -19,11 +19,11 @@ test("clicking Take Office shows game screen with card and resource bars", async
   await page.click("text=Take Office");
   await page.waitForTimeout(500);
 
-  // Resource bar icons should be visible
-  await expect(page.locator("text=Trust")).toBeVisible();
-  await expect(page.locator("text=Funding")).toBeVisible();
-  await expect(page.locator("text=Intel")).toBeVisible();
-  await expect(page.locator("text=Leverage")).toBeVisible();
+  // Resource bar labels should be visible
+  await expect(page.getByText("Trust", { exact: true })).toBeVisible();
+  await expect(page.getByText("Funding", { exact: true })).toBeVisible();
+  await expect(page.getByText("Intel", { exact: true })).toBeVisible();
+  await expect(page.getByText("Leverage", { exact: true })).toBeVisible();
 
   // A card with a speaker and choice buttons should be visible
   await expect(page.locator("button", { hasText: "←" }).first()).toBeVisible();

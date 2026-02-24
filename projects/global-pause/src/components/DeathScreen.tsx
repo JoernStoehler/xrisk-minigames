@@ -30,11 +30,11 @@ export function DeathScreen({
         {death.resource} — {death.extreme}
       </div>
 
-      <p className="text-isia-text text-base max-w-sm mb-8 leading-relaxed">
+      <p className="text-isia-muted text-base max-w-sm mb-8 leading-relaxed">
         {death.message}
       </p>
 
-      <div className="text-isia-muted text-xs font-medium mb-8">
+      <div className="text-isia-muted/60 text-xs font-medium mb-8">
         Survived {turnsSurvived} {turnsSurvived === 1 ? "decision" : "decisions"}
       </div>
 

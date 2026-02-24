@@ -39,7 +39,7 @@ export function ResourceDisplay({
   }
 
   return (
-    <div className="flex justify-center gap-3 py-4 border-b border-isia-border/50 bg-isia-panel/50">
+    <div className="flex justify-center gap-3 py-2 border-b border-isia-border bg-isia-bg">
       {RESOURCE_KEYS.map((key) => (
         <ResourceBar
           key={key}

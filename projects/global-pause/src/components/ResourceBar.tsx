@@ -15,10 +15,10 @@ const LABELS: Record<ResourceKey, string> = {
 };
 
 const BAR_COLORS: Record<ResourceKey, string> = {
-  trust: "#2563EB",
-  funding: "#CA8A04",
-  intel: "#7C3AED",
-  leverage: "#DC2626",
+  trust: "#5B9CF5",
+  funding: "#D4A017",
+  intel: "#9B6FE8",
+  leverage: "#E84E4E",
 };
 
 interface ResourceBarProps {
@@ -43,12 +43,12 @@ export function ResourceBar({ resource, value, preview }: ResourceBarProps) {
 
   return (
     <div className="flex flex-col items-center gap-1 w-[72px]">
-      <span className="text-xl">{ICONS[resource]}</span>
+      <span className="text-base">{ICONS[resource]}</span>
       <div
-        className={`relative w-5 h-28 rounded-md overflow-hidden border-2 ${
+        className={`relative w-5 h-20 rounded-md overflow-hidden border-2 ${
           danger
             ? "border-urgency-red bg-urgency-red/10"
-            : "border-isia-border bg-isia-border/30"
+            : "border-white/15 bg-white/5"
         }`}
       >
         {/* Fill from bottom */}

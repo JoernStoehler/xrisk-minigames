@@ -1,30 +1,7 @@
 import { useEffect } from "react";
 import type { ActiveCard } from "../engine/types";
 import { useSwipe, type TiltDirection } from "../hooks/useSwipe";
-
-const SPEAKER_PORTRAITS: Record<string, string> = {
-  "Chief Financial Officer": "💼",
-  "Communications Director": "📢",
-  "Head of Human Resources": "👥",
-  "Political Advisor": "🏛️",
-  "Press Secretary": "🎤",
-  "Intelligence Analyst": "🔍",
-  "Junior Analyst": "📊",
-  "Customs Liaison": "🛃",
-  "Anonymous Source": "🕵️",
-  "Diplomatic Attaché": "🤝",
-  "Legal Counsel": "⚖️",
-  "Civil Liberties Advocate": "✊",
-  "UN Secretary-General": "🌐",
-  "Ethics Watchdog": "👁️",
-  "Finance Director": "💰",
-  "Enforcement Chief": "🔒",
-  "Investigative Journalist": "📰",
-  "NATO Liaison": "🎖️",
-  "Chief Scientist": "🔬",
-  "Deputy Director": "📋",
-  "Executive Assistant": "📝",
-};
+import { SpeakerPortrait } from "./SpeakerPortrait";
 
 interface SwipeCardProps {
   card: ActiveCard;
@@ -54,15 +31,14 @@ export function SwipeCard({ card, onChoice, onTiltChange }: SwipeCardProps) {
     Math.max(0, (offsetX - tiltThreshold) / 60),
   );
 
-  const accentColor = card.color || "#2563EB";
-  const portrait = SPEAKER_PORTRAITS[card.speaker] || "👤";
+  const accentColor = card.color || "#4A90D9";
 
   return (
-    <div className="flex flex-col items-center flex-1 justify-center px-4 relative">
+    <div className="flex flex-col items-center flex-1 pt-4 px-4">
       {/* The swipeable card */}
       <div
         ref={cardRef}
-        className={`relative w-full max-w-[340px] bg-isia-panel rounded-2xl shadow-[0_2px_24px_rgba(0,0,0,0.15)] border border-isia-border/40 ${
+        className={`relative w-full max-w-[320px] min-h-[480px] flex flex-col bg-isia-panel rounded-2xl border border-black/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_32px_rgba(0,0,0,0.4)] ${
           !isExiting ? "animate-card-enter" : ""
         }`}
         style={style}
@@ -70,34 +46,36 @@ export function SwipeCard({ card, onChoice, onTiltChange }: SwipeCardProps) {
       >
         {/* Colored header with speaker */}
         <div
-          className="px-5 py-3 rounded-t-2xl"
+          className="px-5 py-2.5 rounded-t-2xl"
           style={{ backgroundColor: accentColor }}
         >
-          <div className="text-white text-sm font-bold uppercase tracking-wider">
+          <div className="text-white/90 text-xs font-bold uppercase tracking-wider">
             {card.speaker}
           </div>
         </div>
 
-        {/* Card body */}
-        <div className="px-5 py-5 flex flex-col items-center">
-          {/* Speaker portrait */}
-          <div className="text-7xl mb-4">{portrait}</div>
+        {/* Card body — flex-1 to fill card height */}
+        <div className="px-5 py-5 flex flex-col items-center flex-1">
+          {/* Speaker portrait — geometric SVG */}
+          <div className="mb-3">
+            <SpeakerPortrait speaker={card.speaker} size={160} />
+          </div>
 
           {/* Card text */}
           <div className="text-isia-text text-base leading-relaxed text-center min-h-[80px]">
             {card.text}
           </div>
 
-          {/* Option labels at bottom of card body */}
-          <div className="flex justify-between w-full mt-4">
+          {/* Option labels pinned to bottom of card body */}
+          <div className="flex justify-between w-full mt-auto pt-3">
             <div
-              className="text-urgency-red font-bold text-sm px-2 py-1 rounded-lg bg-urgency-red/15 pointer-events-none max-w-[45%] truncate"
+              className="text-urgency-red font-bold text-xs px-2 py-1 rounded-lg bg-urgency-red/15 pointer-events-none max-w-[45%] truncate"
               style={{ opacity: leftOpacity }}
             >
               ← {card.left.label}
             </div>
             <div
-              className="text-success font-bold text-sm px-2 py-1 rounded-lg bg-success/15 pointer-events-none max-w-[45%] truncate"
+              className="text-success font-bold text-xs px-2 py-1 rounded-lg bg-success/15 pointer-events-none max-w-[45%] truncate"
               style={{ opacity: rightOpacity }}
             >
               {card.right.label} →
@@ -106,17 +84,17 @@ export function SwipeCard({ card, onChoice, onTiltChange }: SwipeCardProps) {
         </div>
       </div>
 
-      {/* Tap fallback buttons — anchored to bottom of area */}
-      <div className="absolute bottom-2 left-0 right-0 flex justify-between max-w-[340px] mx-auto px-6">
+      {/* Tap fallback buttons — subtle, directly below card */}
+      <div className="flex justify-between w-full max-w-[320px] mt-2 px-4">
         <button
-          className="text-sm text-isia-muted font-medium px-4 py-3 min-w-[44px] min-h-[44px] active:text-isia-text transition-colors"
+          className="text-xs text-isia-muted/50 font-medium px-3 py-2 min-w-[44px] min-h-[44px] active:text-isia-muted transition-colors"
           onClick={() => onChoice("left")}
           disabled={isExiting}
         >
           ← {card.left.label}
         </button>
         <button
-          className="text-sm text-isia-muted font-medium px-4 py-3 min-w-[44px] min-h-[44px] active:text-isia-text transition-colors"
+          className="text-xs text-isia-muted/50 font-medium px-3 py-2 min-w-[44px] min-h-[44px] active:text-isia-muted transition-colors"
           onClick={() => onChoice("right")}
           disabled={isExiting}
         >
