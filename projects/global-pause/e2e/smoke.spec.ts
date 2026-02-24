@@ -21,9 +21,9 @@ test("clicking Take Office shows game screen with card and resource bars", async
 
   // Resource bar icons should be visible
   await expect(page.locator("text=Trust")).toBeVisible();
-  await expect(page.locator("text=Funds")).toBeVisible();
+  await expect(page.locator("text=Funding")).toBeVisible();
   await expect(page.locator("text=Intel")).toBeVisible();
-  await expect(page.locator("text=Power")).toBeVisible();
+  await expect(page.locator("text=Leverage")).toBeVisible();
 
   // A card with a speaker and choice buttons should be visible
   await expect(page.locator("button", { hasText: "←" }).first()).toBeVisible();

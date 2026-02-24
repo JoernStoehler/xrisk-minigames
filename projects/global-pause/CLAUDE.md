@@ -1,5 +1,7 @@
 # The Pause — Reigns-Style Card Swipe Game
 
+**Live:** https://global-pause.pages.dev
+
 ## What This Is
 
 A Reigns-clone where the player is the Director-General of the ISIA (International Superintelligence Agency), enforcing an international treaty banning ASI development. One card at a time, binary swipe choices, four resource bars, die-and-restart loop.
@@ -82,10 +84,12 @@ src/
 
 ## Design Rules
 
-- Dark command-center aesthetic (ISIA blue #3b82f6 accent)
-- Monospace font
+- Warm card-game aesthetic — cream background (#F5F0E8), white cards, colored headers per speaker
+- Inter font (Google Fonts), not monospace
+- Per-resource bar colors: Trust=blue, Funding=amber, Intel=violet, Leverage=red
+- Speaker emoji portraits on each card (SPEAKER_PORTRAITS map in SwipeCard.tsx)
 - Mobile-first (portrait, touch targets ≥44px)
-- Full-screen cards — no HUD clutter beyond the 4 resource bars
+- Card dominates the viewport — centered between resource bars and bottom buttons
 - ~2 minute runs, highly replayable
 
 ## Playtesting

@@ -10,6 +10,7 @@
 
 ## Done
 
+- [x] Visual overhaul: warm cream palette, Inter font, speaker emoji portraits, colored card headers, per-resource bar colors, fixed bar labels (Funding/Leverage), eliminated dead space
 - [x] V1 prototype (RTS/map style) — scrapped, UX failed on mobile
 - [x] V2 engine design discussion — concepts preserved, UX pivoted to Reigns-style
 - [x] Delete old code, rewrite CLAUDE.md for new direction

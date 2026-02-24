@@ -44,9 +44,13 @@ These are true right now and must remain true:
 - Vite + React + TypeScript for the frontend
 - Tailwind CSS for styling
 - Playwright for E2E tests and visual QA
-- Cloudflare Pages for deployment (`.pages.dev` domains)
+- Cloudflare Pages for deployment — live URL is `https://<name>.pages.dev` where `<name>` comes from `wrangler.toml`
 - Cloudflare Workers / D1 only when a project actually needs backend/storage
 - localStorage / cookies for client-side persistence when sufficient
+
+**Environment & credentials:**
+- `.env` at repo root has Cloudflare credentials (account ID, API token), GitHub PAT, and service keys
+- Source it or use individual vars when tools need auth (e.g. `CLOUDFLARE_API_TOKEN` for wrangler)
 
 **Definition of Done (before marking work complete):**
 - Code compiles: `npm run build` passes

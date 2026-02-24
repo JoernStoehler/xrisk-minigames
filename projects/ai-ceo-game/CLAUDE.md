@@ -1,5 +1,7 @@
 # AI CEO Game — Agent Instructions
 
+**Live:** https://ai-ceo-game.pages.dev
+
 ## What This Is
 
 A web-based interactive experience where the player is CEO of OpenAI in late 2026. They receive emails, make decisions, and watch the company grow while safety erodes. Every path ends in human extinction on September 15, 2028. The game communicates that control over sufficiently capable AI is an illusion.

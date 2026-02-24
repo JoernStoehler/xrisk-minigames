@@ -1,5 +1,7 @@
 # [Project Name] — Agent Instructions
 
+**Live:** https://[name].pages.dev
+
 <!-- Replace this section with the project concept, target experience, and key design decisions -->
 
 ## What This Is

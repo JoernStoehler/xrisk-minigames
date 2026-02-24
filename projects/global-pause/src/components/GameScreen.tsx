@@ -15,7 +15,7 @@ export function GameScreen({ state, onChoice }: GameScreenProps) {
   if (!state.activeCard) return null;
 
   return (
-    <div className="flex flex-col min-h-dvh">
+    <div className="flex flex-col min-h-dvh bg-isia-bg">
       {/* Resource bars at top */}
       <ResourceDisplay
         resources={state.resources}
@@ -33,7 +33,7 @@ export function GameScreen({ state, onChoice }: GameScreenProps) {
       />
 
       {/* Turn counter */}
-      <div className="text-center text-isia-muted text-xs py-3">
+      <div className="text-center text-isia-muted text-xs font-semibold py-3">
         Decision #{state.turn + 1}
       </div>
     </div>

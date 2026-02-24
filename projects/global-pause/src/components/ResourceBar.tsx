@@ -9,9 +9,16 @@ const ICONS: Record<ResourceKey, string> = {
 
 const LABELS: Record<ResourceKey, string> = {
   trust: "Trust",
-  funding: "Funds",
+  funding: "Funding",
   intel: "Intel",
-  leverage: "Power",
+  leverage: "Leverage",
+};
+
+const BAR_COLORS: Record<ResourceKey, string> = {
+  trust: "#2563EB",
+  funding: "#CA8A04",
+  intel: "#7C3AED",
+  leverage: "#DC2626",
 };
 
 interface ResourceBarProps {
@@ -35,19 +42,19 @@ export function ResourceBar({ resource, value, preview }: ResourceBarProps) {
   const isUp = preview?.direction === "up";
 
   return (
-    <div className="flex flex-col items-center gap-0.5 w-16">
-      <span className="text-lg">{ICONS[resource]}</span>
+    <div className="flex flex-col items-center gap-1 w-[72px]">
+      <span className="text-xl">{ICONS[resource]}</span>
       <div
-        className={`relative w-8 h-24 rounded-sm overflow-hidden border ${
+        className={`relative w-5 h-28 rounded-md overflow-hidden border-2 ${
           danger
-            ? "border-urgency-red bg-urgency-red/20"
-            : "border-isia-border bg-isia-panel"
+            ? "border-urgency-red bg-urgency-red/10"
+            : "border-isia-border bg-isia-border/30"
         }`}
       >
         {/* Fill from bottom */}
         <div
-          className="absolute bottom-0 left-0 right-0 bg-isia-accent/60 transition-[height] duration-400 ease-out"
-          style={{ height: `${value}%` }}
+          className="absolute bottom-0 left-0 right-0 transition-[height] duration-400 ease-out"
+          style={{ height: `${value}%`, backgroundColor: BAR_COLORS[resource] + "B3" }}
         />
         {/* Preview arrow overlay */}
         {preview && (
@@ -60,7 +67,7 @@ export function ResourceBar({ resource, value, preview }: ResourceBarProps) {
           </div>
         )}
       </div>
-      <span className="text-[10px] text-isia-muted uppercase tracking-wider">
+      <span className="text-[11px] text-isia-muted font-semibold uppercase tracking-wider">
         {LABELS[resource]}
       </span>
     </div>
