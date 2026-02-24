@@ -102,6 +102,16 @@ npm run cli reset        # New game
 ## Verification
 
 ```bash
-npm run check   # typecheck + lint + build + test
-npm run dev     # dev server at http://localhost:5173
+npm run check        # typecheck + lint + build + unit tests
+npm run test:e2e     # E2E tests including drag/swipe interaction
+npm run cli auto 50  # headless engine playtest
+npm run dev          # dev server at http://localhost:5173
 ```
+
+### Review checklist (after implementing UI changes)
+
+The core mechanic is the drag/swipe interaction. Automated checks (typecheck, lint, build) do NOT verify interactive behavior. After any change to SwipeCard, useSwipe, ResourceBar, or GameScreen:
+
+1. **Drag E2E test passes** (`e2e/drag.spec.ts`) — simulates pointer drag, verifies tilt direction propagates to resource bar previews, verifies swipe commit advances the game
+2. **Card re-mount on new card** — the SwipeCard key must change when activeCard changes, otherwise drag state leaks between cards and enter animation doesn't fire
+3. **Visual QA at mobile viewport** — Playwright screenshot at 390×844, check card layout, bar visibility, button touch targets
