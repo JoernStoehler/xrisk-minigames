@@ -3,9 +3,10 @@
 ## Current
 
 - [ ] Swipe UX polish (test on real mobile device, tune thresholds/velocity)
-- [ ] Card content: replace throwaway cards with real x-risk scenario cards (needs Jörn's domain input)
-- [ ] More history-triggered chains (un-speech promises, hiring-spree consequences)
-- [ ] More degraded variant pairs (low-funding, low-leverage variants)
+- [ ] Card content: replace throwaway cards with real x-risk scenario cards (needs Jörn's domain input + expert)
+- [ ] More history-triggered chains (blocked on card content — no point chaining throwaway cards)
+- [ ] More degraded variant pairs (blocked on card content — variants of throwaway cards will be replaced)
+- [ ] Re-balance after content pass (follow BALANCE.md process)
 
 ## Done
 
