@@ -246,8 +246,7 @@ export function SpeakerPortrait({ speaker, size = 128 }: SpeakerPortraitProps) {
       xmlns="http://www.w3.org/2000/svg"
       className="block"
     >
-      {/* Background circle */}
-      <circle cx="64" cy="64" r="62" fill={data.bg} />
+      {/* No background circle — card color shows through */}
 
       {/* Body shape — varies by type */}
       <BodyShape type={data.bodyType} skin={data.skin} />
@@ -258,8 +257,8 @@ export function SpeakerPortrait({ speaker, size = 128 }: SpeakerPortraitProps) {
       {/* Face expression */}
       <FaceExpression expression={data.expression} accent={data.accent} headWidth={data.headWidth} />
 
-      {/* Large accessory — white for contrast against dark bg circle */}
-      {data.accessory("#FFFDF7")}
+      {/* Large accessory — dark for contrast on bold card bg */}
+      {data.accessory(data.accent)}
     </svg>
   );
 }

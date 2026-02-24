@@ -13,61 +13,82 @@ test("title screen loads and shows Take Office", async ({ page }) => {
   await page.screenshot({ path: "/tmp/e2e-01-title.png" });
 });
 
-test("clicking Take Office shows game screen with card and resource bars", async ({
-  page,
-}) => {
+test("clicking Take Office shows game screen with card", async ({ page }) => {
   await page.click("text=Take Office");
   await page.waitForTimeout(500);
 
-  // Resource bar labels should be visible
-  await expect(page.getByText("Trust", { exact: true })).toBeVisible();
-  await expect(page.getByText("Funding", { exact: true })).toBeVisible();
-  await expect(page.getByText("Intel", { exact: true })).toBeVisible();
-  await expect(page.getByText("Leverage", { exact: true })).toBeVisible();
+  // Resource icons should be present (SVG elements in the dark top bar)
+  await expect(page.locator("svg").first()).toBeVisible();
 
-  // A card with a speaker and choice buttons should be visible
-  await expect(page.locator("button", { hasText: "←" }).first()).toBeVisible();
-  await expect(page.locator("button", { hasText: "→" }).first()).toBeVisible();
+  // Card text and speaker name should be visible
+  await expect(page.locator(".bg-tan").first()).toBeVisible();
+
+  // Bottom bar with status info
+  await expect(page.getByText("Director-General")).toBeVisible();
 
   await page.screenshot({ path: "/tmp/e2e-02-game.png" });
 });
 
-test("making a choice advances to next card", async ({ page }) => {
+test("swiping advances to next card", async ({ page }) => {
   await page.click("text=Take Office");
   await page.waitForTimeout(500);
 
-  // Get the first card's text
-  const decisionText = await page.locator("text=Decision #1").textContent();
-  expect(decisionText).toContain("1");
+  // Get initial decision count
+  await expect(page.getByText("0", { exact: true })).toBeVisible();
 
-  // Click the left choice button
-  await page.locator("button", { hasText: "←" }).first().click();
+  // Simulate a swipe by dragging the card
+  const card = page.locator("[style*='touch-action']").first();
+  const box = await card.boundingBox();
+  if (box) {
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    // Drag far enough to commit
+    for (let i = 0; i < 10; i++) {
+      await page.mouse.move(
+        box.x + box.width / 2 - (i + 1) * 20,
+        box.y + box.height / 2,
+      );
+    }
+    await page.mouse.up();
+  }
+
   await page.waitForTimeout(500);
 
-  // Should now show Decision #2
-  await expect(page.locator("text=Decision #2")).toBeVisible();
+  // Decision count should have advanced
+  await expect(page.getByText("1", { exact: true }).first()).toBeVisible();
   await page.screenshot({ path: "/tmp/e2e-03-after-choice.png" });
 });
 
-test("repeated choices eventually trigger death screen", async ({ page }) => {
+test("repeated swipes eventually trigger death screen", async ({ page }) => {
   await page.click("text=Take Office");
   await page.waitForTimeout(300);
 
-  // Spam left choices — should eventually die
+  // Spam left swipes — should eventually die
   for (let i = 0; i < 50; i++) {
     const tryAgain = page.locator("text=Try Again");
     if (await tryAgain.isVisible().catch(() => false)) {
       break;
     }
-    const leftBtn = page.locator("button", { hasText: "←" }).first();
-    if (await leftBtn.isVisible().catch(() => false)) {
-      await leftBtn.click();
-      await page.waitForTimeout(100);
+
+    const card = page.locator("[style*='touch-action']").first();
+    const isVisible = await card.isVisible().catch(() => false);
+    if (isVisible) {
+      const box = await card.boundingBox();
+      if (box) {
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.mouse.down();
+        for (let j = 0; j < 8; j++) {
+          await page.mouse.move(
+            box.x + box.width / 2 - (j + 1) * 25,
+            box.y + box.height / 2,
+          );
+        }
+        await page.mouse.up();
+        await page.waitForTimeout(150);
+      }
     }
   }
 
-  // Should be on death screen or still playing
-  // (Death isn't guaranteed in 50 left-only turns, but very likely)
   const isDead = await page
     .locator("text=Try Again")
     .isVisible()
@@ -79,7 +100,7 @@ test("repeated choices eventually trigger death screen", async ({ page }) => {
     // Restart
     await page.click("text=Try Again");
     await page.waitForTimeout(500);
-    await expect(page.locator("text=Decision #1")).toBeVisible();
+    await expect(page.getByText("Director-General")).toBeVisible();
     await page.screenshot({ path: "/tmp/e2e-05-restart.png" });
   }
 });

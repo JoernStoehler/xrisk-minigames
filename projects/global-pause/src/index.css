@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --color-isia-bg: #2A2118;
-  --color-isia-panel: #FFFDF7;
-  --color-isia-border: #4A3D2E;
-  --color-isia-accent: #4A90D9;
-  --color-isia-text: #1C1917;
-  --color-isia-muted: #B8AFA1;
-  --color-urgency-yellow: #eab308;
-  --color-urgency-orange: #f97316;
+  /* Reigns-style palette */
+  --color-bar-dark: #2A1F0F;
+  --color-tan: #B8A668;
+  --color-tan-light: #C8B888;
+  --color-text-dark: #2A1F0F;
+  --color-text-light: #D4C8A0;
+  --color-text-muted: #8A7A5A;
+
+  /* Resource impact indicators */
+  --color-impact-down: #E84E6A;
+  --color-impact-up: #4EE870;
+
+  /* Death/urgency */
   --color-urgency-red: #ef4444;
   --color-success: #22c55e;
-  --color-res-trust: #5B9CF5;
-  --color-res-funding: #D4A017;
-  --color-res-intel: #9B6FE8;
-  --color-res-leverage: #E84E4E;
+
+  /* Legacy aliases (TitleScreen/DeathScreen still reference these) */
+  --color-isia-bg: #2A1F0F;
+  --color-isia-accent: #B8A668;
+  --color-isia-muted: #D4C8A0;
+  --color-isia-text: #D4C8A0;
 }
 
 body {
-  background-color: var(--color-isia-bg);
-  color: var(--color-isia-text);
-  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background-color: var(--color-bar-dark);
+  color: var(--color-text-dark);
+  font-family: "Space Mono", monospace;
   overscroll-behavior: none;
   touch-action: manipulation;
   -webkit-user-select: none;
@@ -29,7 +36,7 @@ body {
 
 @keyframes card-enter {
   from {
-    transform: translateY(40px) scale(0.95);
+    transform: translateY(30px) scale(0.97);
     opacity: 0;
   }
   to {
@@ -38,7 +45,7 @@ body {
   }
 }
 .animate-card-enter {
-  animation: card-enter 0.3s ease-out;
+  animation: card-enter 0.25s ease-out;
 }
 
 @keyframes bar-pulse {
@@ -47,7 +54,7 @@ body {
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 }
 .animate-bar-pulse {

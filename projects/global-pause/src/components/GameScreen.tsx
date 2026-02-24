@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { GameState } from "../engine/types";
 import type { TiltDirection } from "../hooks/useSwipe";
-import { ResourceDisplay } from "./ResourceDisplay";
+import { ResourceIcons } from "./ResourceIcons";
 import { SwipeCard } from "./SwipeCard";
 
 interface GameScreenProps {
@@ -15,26 +15,43 @@ export function GameScreen({ state, onChoice }: GameScreenProps) {
   if (!state.activeCard) return null;
 
   return (
-    <div className="flex flex-col min-h-dvh bg-isia-bg">
-      {/* Resource bars at top */}
-      <ResourceDisplay
+    <div className="flex flex-col min-h-dvh">
+      {/* Dark top bar — resource icons */}
+      <ResourceIcons
         resources={state.resources}
         tiltDirection={tiltDirection}
         leftPreviews={state.activeCard.left.previews}
         rightPreviews={state.activeCard.right.previews}
       />
 
-      {/* Card area */}
-      <SwipeCard
-        key={state.activeCard.templateId + "-" + state.turn}
-        card={state.activeCard}
-        onChoice={onChoice}
-        onTiltChange={setTiltDirection}
-      />
+      {/* Tan middle zone — card area */}
+      <div className="flex-1 flex flex-col bg-tan py-4">
+        <SwipeCard
+          key={state.activeCard.templateId + "-" + state.turn}
+          card={state.activeCard}
+          onChoice={onChoice}
+          onTiltChange={setTiltDirection}
+        />
+      </div>
 
-      {/* Turn counter */}
-      <div className="text-center text-isia-muted/60 text-xs font-semibold py-3">
-        Decision #{state.turn + 1}
+      {/* Dark bottom bar — status info */}
+      <div className="bg-bar-dark px-5 py-3">
+        <div className="flex justify-between items-baseline">
+          <span className="text-text-light text-xs font-bold">
+            Director-General
+          </span>
+          <span className="text-text-light text-2xl font-bold">
+            {2026 + Math.floor(state.turn / 12)}
+          </span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-text-muted text-xs">
+            <span className="text-text-light text-lg font-bold">
+              {state.turn}
+            </span>{" "}
+            decisions made
+          </span>
+        </div>
       </div>
     </div>
   );

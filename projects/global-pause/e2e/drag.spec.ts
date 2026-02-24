@@ -21,10 +21,10 @@ async function getCardCenter(page: import("@playwright/test").Page) {
 test("dragging card shows option labels", async ({ page }) => {
   const { x, y } = await getCardCenter(page);
 
-  // Get the card's text content before drag to verify it doesn't change
+  // Get speaker name before drag
   const speakerBefore = await page
-    .locator(".animate-card-enter .uppercase")
-    .first()
+    .locator(".animate-card-enter .font-bold")
+    .last()
     .textContent();
 
   // Start drag
@@ -35,8 +35,8 @@ test("dragging card shows option labels", async ({ page }) => {
   await page.mouse.move(x + 60, y, { steps: 10 });
   await page.waitForTimeout(100);
 
-  // Right option label should be visible (opacity > 0)
-  const rightLabel = page.locator(".text-success.font-bold").first();
+  // Right option label should be visible (choice overlay on card)
+  const rightLabel = page.locator(".drop-shadow-lg").first();
   await expect(rightLabel).toBeVisible();
 
   // Drag back left past center to -60px (left tilt)
@@ -44,7 +44,7 @@ test("dragging card shows option labels", async ({ page }) => {
   await page.waitForTimeout(100);
 
   // Left option label should be visible
-  const leftLabel = page.locator(".text-urgency-red.font-bold").first();
+  const leftLabel = page.locator(".drop-shadow-lg").first();
   await expect(leftLabel).toBeVisible();
 
   // Release without committing (within ±100px threshold)
@@ -52,18 +52,18 @@ test("dragging card shows option labels", async ({ page }) => {
   await page.mouse.up();
   await page.waitForTimeout(400); // wait for spring-back animation
 
-  // Card should still be showing — same speaker, no choice was made
+  // Card should still be showing — same speaker
   const speakerAfter = await page
-    .locator(".animate-card-enter .uppercase")
-    .first()
+    .locator(".animate-card-enter .font-bold")
+    .last()
     .textContent();
   expect(speakerAfter).toBe(speakerBefore);
 });
 
-test("dragging card shows resource bar previews", async ({ page }) => {
+test("dragging card shows resource impact indicators", async ({ page }) => {
   const { x, y } = await getCardCenter(page);
 
-  // No preview arrows should be visible before drag
+  // No impact indicators should be visible before drag
   await expect(page.locator(".animate-bar-pulse")).toHaveCount(0);
 
   // Start drag right past tilt threshold
@@ -72,27 +72,23 @@ test("dragging card shows resource bar previews", async ({ page }) => {
   await page.mouse.move(x + 60, y, { steps: 10 });
   await page.waitForTimeout(100);
 
-  // At least one resource bar should show a preview arrow
-  const previews = page.locator(".animate-bar-pulse");
-  const count = await previews.count();
+  // At least one resource icon should show an impact triangle
+  const indicators = page.locator(".animate-bar-pulse");
+  const count = await indicators.count();
   expect(count).toBeGreaterThan(0);
-
-  // Preview arrows should contain ▲ or ▼ text
-  const firstPreviewText = await previews.first().textContent();
-  expect(firstPreviewText).toMatch(/[▲▼]/);
 
   // Release without committing
   await page.mouse.move(x, y, { steps: 5 });
   await page.mouse.up();
   await page.waitForTimeout(400);
 
-  // Previews should be gone after release
+  // Indicators should be gone after release
   await expect(page.locator(".animate-bar-pulse")).toHaveCount(0);
 });
 
 test("completing a swipe advances the game", async ({ page }) => {
-  // Should be on Decision #1
-  await expect(page.locator("text=Decision #1")).toBeVisible();
+  // Should show initial decision count of 0
+  await expect(page.getByText("0", { exact: true })).toBeVisible();
 
   const { x, y } = await getCardCenter(page);
 
@@ -105,6 +101,6 @@ test("completing a swipe advances the game", async ({ page }) => {
   // Wait for fly-off animation + new card draw
   await page.waitForTimeout(600);
 
-  // Should now show Decision #2
-  await expect(page.locator("text=Decision #2")).toBeVisible();
+  // Decision count should have advanced to 1
+  await expect(page.getByText("1", { exact: true }).first()).toBeVisible();
 });
