@@ -10,7 +10,10 @@
 
 ## Done
 
-- [x] Visual overhaul: warm cream palette, Inter font, speaker emoji portraits, colored card headers, per-resource bar colors, fixed bar labels (Funding/Leverage), eliminated dead space
+- [x] Visual overhaul v3: Reigns-style layout (dark top/bottom bars, tan mid zone, gold card frame, card-back deck stack, Space Mono font, 21 AI-generated portraits via fal.ai, resource icons instead of bars, choice overlay on swipe)
+- [x] Visual overhaul v2: dark warm bg (#2A2118) + cream card (#FFFDF7), 21 geometric SVG speaker portraits (SpeakerPortrait.tsx), compact resource bars with bright colors, card materiality (shadow/border), Reigns-style contrast model
+- [x] Visual overhaul v1: warm cream palette, Inter font, speaker emoji portraits, colored card headers, per-resource bar colors, fixed bar labels (Funding/Leverage)
+- [x] Visual QA process documented in CLAUDE.md (reusable prompt templates, scoring rubric, process rules)
 - [x] V1 prototype (RTS/map style) — scrapped, UX failed on mobile
 - [x] V2 engine design discussion — concepts preserved, UX pivoted to Reigns-style
 - [x] Delete old code, rewrite CLAUDE.md for new direction
