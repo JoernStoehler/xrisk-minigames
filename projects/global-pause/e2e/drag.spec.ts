@@ -36,7 +36,8 @@ test("dragging card shows option labels", async ({ page }) => {
   await page.waitForTimeout(100);
 
   // Right option label should be visible (choice overlay on card)
-  const rightLabel = page.locator(".drop-shadow-lg").first();
+  // Labels are always in DOM but opacity-controlled — use .last() for right label
+  const rightLabel = page.locator(".drop-shadow-lg").last();
   await expect(rightLabel).toBeVisible();
 
   // Drag back left past center to -60px (left tilt)

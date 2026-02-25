@@ -1,4 +1,4 @@
-import type { ChoicePreview, Resources, ResourceKey } from "../engine/types";
+import type { ChoicePreview, ResourceKey } from "../engine/types";
 import type { TiltDirection } from "../hooks/useSwipe";
 
 const RESOURCE_KEYS: ResourceKey[] = ["trust", "funding", "intel", "leverage"];
@@ -6,7 +6,7 @@ const RESOURCE_KEYS: ResourceKey[] = ["trust", "funding", "intel", "leverage"];
 /** Simple SVG icons — styled after Reigns' cross/figure/sword/dollar */
 function TrustIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+    <svg width="48" height="48" viewBox="0 0 36 36" fill="currentColor">
       {/* Shield shape */}
       <path d="M18 4 L30 10 L30 20 Q30 30 18 34 Q6 30 6 20 L6 10 Z" />
     </svg>
@@ -15,7 +15,7 @@ function TrustIcon() {
 
 function FundingIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+    <svg width="48" height="48" viewBox="0 0 36 36" fill="currentColor">
       {/* Dollar sign — blocky/geometric like Reigns */}
       <rect x="16" y="4" width="4" height="28" />
       <rect x="10" y="10" width="16" height="4" />
@@ -29,7 +29,7 @@ function FundingIcon() {
 
 function IntelIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+    <svg width="48" height="48" viewBox="0 0 36 36" fill="currentColor">
       {/* Eye — angular/geometric */}
       <path d="M4 18 Q18 6 32 18 Q18 30 4 18 Z" />
       <circle cx="18" cy="18" r="5" fill="#2A1F0F" />
@@ -40,7 +40,7 @@ function IntelIcon() {
 
 function LeverageIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+    <svg width="48" height="48" viewBox="0 0 36 36" fill="currentColor">
       {/* Scales of justice — angular */}
       <rect x="16" y="6" width="4" height="24" />
       <rect x="6" y="8" width="24" height="3" />
@@ -59,7 +59,6 @@ const ICON_COMPONENTS: Record<ResourceKey, () => React.JSX.Element> = {
 };
 
 interface ResourceIconsProps {
-  resources: Resources;
   tiltDirection: TiltDirection;
   leftPreviews: ChoicePreview[];
   rightPreviews: ChoicePreview[];
@@ -83,7 +82,7 @@ export function ResourceIcons({
   }
 
   return (
-    <div className="flex justify-around items-center px-6 py-3 bg-bar-dark">
+    <div className="flex justify-around items-center px-6 py-5 bg-bar-dark">
       {RESOURCE_KEYS.map((key) => {
         const Icon = ICON_COMPONENTS[key];
         const preview = previewMap.get(key);
@@ -131,7 +130,7 @@ export function ResourceIcons({
                 </svg>
               )}
             </div>
-            <div className="text-[#D4C8A0]">
+            <div className="text-text-light">
               <Icon />
             </div>
           </div>

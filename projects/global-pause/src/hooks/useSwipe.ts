@@ -27,7 +27,9 @@ export function useSwipe({
     offsetX: 0,
   });
   const cardRef = useRef<HTMLDivElement>(null);
-  const [offsetX, setOffsetX] = useState(0);
+  const leftLabelRef = useRef<HTMLDivElement>(null);
+  const rightLabelRef = useRef<HTMLDivElement>(null);
+  const currentTiltRef = useRef<TiltDirection>("center");
   const [isExiting, setIsExiting] = useState(false);
   const [tiltDirection, setTiltDirection] = useState<TiltDirection>("center");
 
@@ -38,6 +40,22 @@ export function useSwipe({
     cardRef.current.style.transition = transition
       ? "transform 300ms ease-out"
       : "none";
+  }, []);
+
+  const updateLabelOpacity = useCallback((dx: number) => {
+    const tiltThreshold = 30;
+    const leftOpacity = Math.min(
+      1,
+      Math.max(0, (-dx - tiltThreshold) / 60),
+    );
+    const rightOpacity = Math.min(
+      1,
+      Math.max(0, (dx - tiltThreshold) / 60),
+    );
+    if (leftLabelRef.current)
+      leftLabelRef.current.style.opacity = String(leftOpacity);
+    if (rightLabelRef.current)
+      rightLabelRef.current.style.opacity = String(rightOpacity);
   }, []);
 
   const onPointerDown = useCallback(
@@ -61,15 +79,21 @@ export function useSwipe({
       if (!dragRef.current.active) return;
       const dx = e.clientX - dragRef.current.startX;
       dragRef.current.offsetX = dx;
-      setOffsetX(dx);
       updateTransform(dx, false);
+      updateLabelOpacity(dx);
 
       const threshold = 30;
-      if (dx < -threshold) setTiltDirection("left");
-      else if (dx > threshold) setTiltDirection("right");
-      else setTiltDirection("center");
+      let newDir: TiltDirection;
+      if (dx < -threshold) newDir = "left";
+      else if (dx > threshold) newDir = "right";
+      else newDir = "center";
+
+      if (newDir !== currentTiltRef.current) {
+        currentTiltRef.current = newDir;
+        setTiltDirection(newDir);
+      }
     },
-    [updateTransform],
+    [updateTransform, updateLabelOpacity],
   );
 
   const onPointerUp = useCallback(
@@ -100,7 +124,7 @@ export function useSwipe({
 
         setTimeout(() => {
           setIsExiting(false);
-          setOffsetX(0);
+          currentTiltRef.current = "center";
           setTiltDirection("center");
           updateTransform(0, false);
           onSwipe(direction);
@@ -108,8 +132,11 @@ export function useSwipe({
       } else {
         // Spring back
         updateTransform(0, true);
-        setOffsetX(0);
+        currentTiltRef.current = "center";
         setTiltDirection("center");
+        // Reset label opacity
+        if (leftLabelRef.current) leftLabelRef.current.style.opacity = "0";
+        if (rightLabelRef.current) rightLabelRef.current.style.opacity = "0";
       }
     },
     [commitThreshold, velocityThreshold, onSwipe, updateTransform],
@@ -122,7 +149,8 @@ export function useSwipe({
 
   return {
     cardRef,
-    offsetX,
+    leftLabelRef,
+    rightLabelRef,
     tiltDirection,
     isExiting,
     style,

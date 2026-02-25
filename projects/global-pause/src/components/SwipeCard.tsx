@@ -10,82 +10,77 @@ interface SwipeCardProps {
 }
 
 export function SwipeCard({ card, onChoice, onTiltChange }: SwipeCardProps) {
-  const { cardRef, offsetX, tiltDirection, isExiting, style, handlers } =
-    useSwipe({
-      onSwipe: onChoice,
-    });
+  const {
+    cardRef,
+    leftLabelRef,
+    rightLabelRef,
+    tiltDirection,
+    isExiting,
+    style,
+    handlers,
+  } = useSwipe({
+    onSwipe: onChoice,
+  });
 
   // Sync tilt direction to parent for resource icon previews
   useEffect(() => {
     onTiltChange(tiltDirection);
   }, [tiltDirection, onTiltChange]);
 
-  // Choice label opacity: proportional to drag offset (Reigns-style overlay)
-  const tiltThreshold = 30;
-  const leftOpacity = Math.min(
-    1,
-    Math.max(0, (-offsetX - tiltThreshold) / 60),
-  );
-  const rightOpacity = Math.min(
-    1,
-    Math.max(0, (offsetX - tiltThreshold) / 60),
-  );
-
   return (
-    <div className="flex flex-col items-center flex-1 relative justify-center px-4">
-      {/* Card back — peeks out behind card, like Reigns deck stack */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[82%] max-w-[330px] rounded-lg overflow-hidden bg-[#1A3D2E] flex flex-col items-center justify-center gap-12 py-8"
-        style={{ height: "calc(100% - 16px)" }}
-      >
-        <FleurDeLis />
-        <FleurDeLis />
-        <FleurDeLis />
-      </div>
-
-      {/* Main swipeable card */}
-      <div
-        ref={cardRef}
-        className={`relative w-full max-w-[340px] flex flex-col rounded-lg overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.5)] ${
-          !isExiting ? "animate-card-enter" : ""
-        }`}
-        style={style}
-        {...handlers}
-      >
-        {/* Text area — tan/gold background with dialogue */}
-        <div className="bg-tan px-5 py-4 min-h-[72px] flex items-center justify-center">
-          <p className="text-text-dark text-[13px] leading-relaxed text-center">
-            {card.text}
-          </p>
+    <div className="flex flex-col items-center flex-1 relative justify-center px-4 overflow-hidden">
+      {/* Wrapper — card back and main card overlap here */}
+      <div className="relative w-full max-w-[340px]">
+        {/* Card back — matches main card size exactly, hidden in neutral */}
+        <div className="absolute inset-0 rounded-lg bg-[#1A3D2E] flex flex-col items-center justify-center gap-12">
+          <FleurDeLis />
+          <FleurDeLis />
+          <FleurDeLis />
         </div>
 
-        {/* Portrait area — image fills entirely (bg color baked into image) */}
-        <div className="relative overflow-hidden">
-          {/* Choice label overlay — appears on swipe like Reigns */}
-          {leftOpacity > 0 && (
+        {/* Main swipeable card */}
+        <div
+          ref={cardRef}
+          className={`relative flex flex-col overflow-hidden ${
+            !isExiting ? "animate-card-enter" : ""
+          }`}
+          style={style}
+          {...handlers}
+        >
+          {/* Text area — tan/gold background with dialogue */}
+          <div className="bg-tan px-5 py-4 min-h-[72px] flex items-center justify-center">
+            <p className="text-text-dark text-[13px] leading-relaxed text-center">
+              {card.text}
+            </p>
+          </div>
+
+          {/* Portrait area — image fills entirely (bg color baked into image) */}
+          <div className="relative overflow-hidden rounded-lg">
+            {/* Choice label overlays — always rendered, opacity controlled by useSwipe refs */}
             <div
+              ref={leftLabelRef}
               className="absolute top-4 left-4 z-10 text-white text-base font-bold drop-shadow-lg"
-              style={{ opacity: leftOpacity }}
+              style={{ opacity: 0 }}
             >
               {card.left.label}
             </div>
-          )}
-          {rightOpacity > 0 && (
             <div
+              ref={rightLabelRef}
               className="absolute top-4 right-4 z-10 text-white text-base font-bold text-right drop-shadow-lg"
-              style={{ opacity: rightOpacity }}
+              style={{ opacity: 0 }}
             >
               {card.right.label}
             </div>
-          )}
 
-          <SpeakerPortrait speaker={card.speaker} />
-        </div>
+            <SpeakerPortrait speaker={card.speaker} />
+          </div>
 
-        {/* Speaker name — tan footer bar */}
-        <div className="bg-tan px-4 py-2.5 text-center">
-          <span className="text-text-dark text-sm font-bold">
-            {card.speaker}
-          </span>
+          {/* Speaker name — tan footer bar */}
+          <div className="bg-tan px-4 py-2.5 text-center">
+            <span className="text-text-dark text-sm font-bold">
+              {card.speaker}
+            </span>
+          </div>
         </div>
       </div>
     </div>

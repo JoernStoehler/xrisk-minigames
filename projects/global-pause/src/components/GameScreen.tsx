@@ -18,7 +18,6 @@ export function GameScreen({ state, onChoice }: GameScreenProps) {
     <div className="flex flex-col min-h-dvh">
       {/* Dark top bar — resource icons */}
       <ResourceIcons
-        resources={state.resources}
         tiltDirection={tiltDirection}
         leftPreviews={state.activeCard.left.previews}
         rightPreviews={state.activeCard.right.previews}
@@ -35,7 +34,7 @@ export function GameScreen({ state, onChoice }: GameScreenProps) {
       </div>
 
       {/* Dark bottom bar — status info */}
-      <div className="bg-bar-dark px-5 py-3">
+      <div className="bg-bar-dark px-5 py-5">
         <div className="flex justify-between items-baseline">
           <span className="text-text-light text-xs font-bold">
             Director-General

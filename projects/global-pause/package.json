@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "cli": "tsx src/cli.ts",
+    "screenshot": "playwright test e2e/smoke.spec.ts -g 'clicking Take Office' --reporter=list && echo 'Screenshots at /tmp/e2e-01-title.png and /tmp/e2e-02-game.png'",
     "check": "npm run typecheck && npm run lint && npm run build && npm test",
     "setup:ccweb": "npx playwright install --with-deps chromium 2>/dev/null; npm install"
   },

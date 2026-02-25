@@ -17,11 +17,11 @@
   --color-urgency-red: #ef4444;
   --color-success: #22c55e;
 
-  /* Legacy aliases (TitleScreen/DeathScreen still reference these) */
-  --color-isia-bg: #2A1F0F;
-  --color-isia-accent: #B8A668;
-  --color-isia-muted: #D4C8A0;
-  --color-isia-text: #D4C8A0;
+}
+
+html {
+  overflow: hidden;
+  height: 100dvh;
 }
 
 body {
@@ -32,6 +32,8 @@ body {
   touch-action: manipulation;
   -webkit-user-select: none;
   user-select: none;
+  overflow: hidden;
+  height: 100dvh;
 }
 
 @keyframes card-enter {
