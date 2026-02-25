@@ -27,8 +27,6 @@ export function useSwipe({
     offsetX: 0,
   });
   const cardRef = useRef<HTMLDivElement>(null);
-  const leftLabelRef = useRef<HTMLDivElement>(null);
-  const rightLabelRef = useRef<HTMLDivElement>(null);
   const currentTiltRef = useRef<TiltDirection>("center");
   const [isExiting, setIsExiting] = useState(false);
   const [tiltDirection, setTiltDirection] = useState<TiltDirection>("center");
@@ -40,22 +38,6 @@ export function useSwipe({
     cardRef.current.style.transition = transition
       ? "transform 300ms ease-out"
       : "none";
-  }, []);
-
-  const updateLabelOpacity = useCallback((dx: number) => {
-    const tiltThreshold = 30;
-    const leftOpacity = Math.min(
-      1,
-      Math.max(0, (-dx - tiltThreshold) / 60),
-    );
-    const rightOpacity = Math.min(
-      1,
-      Math.max(0, (dx - tiltThreshold) / 60),
-    );
-    if (leftLabelRef.current)
-      leftLabelRef.current.style.opacity = String(leftOpacity);
-    if (rightLabelRef.current)
-      rightLabelRef.current.style.opacity = String(rightOpacity);
   }, []);
 
   const onPointerDown = useCallback(
@@ -80,7 +62,6 @@ export function useSwipe({
       const dx = e.clientX - dragRef.current.startX;
       dragRef.current.offsetX = dx;
       updateTransform(dx, false);
-      updateLabelOpacity(dx);
 
       const threshold = 30;
       let newDir: TiltDirection;
@@ -93,7 +74,7 @@ export function useSwipe({
         setTiltDirection(newDir);
       }
     },
-    [updateTransform, updateLabelOpacity],
+    [updateTransform],
   );
 
   const onPointerUp = useCallback(
@@ -134,9 +115,6 @@ export function useSwipe({
         updateTransform(0, true);
         currentTiltRef.current = "center";
         setTiltDirection("center");
-        // Reset label opacity
-        if (leftLabelRef.current) leftLabelRef.current.style.opacity = "0";
-        if (rightLabelRef.current) rightLabelRef.current.style.opacity = "0";
       }
     },
     [commitThreshold, velocityThreshold, onSwipe, updateTransform],
@@ -149,8 +127,6 @@ export function useSwipe({
 
   return {
     cardRef,
-    leftLabelRef,
-    rightLabelRef,
     tiltDirection,
     isExiting,
     style,

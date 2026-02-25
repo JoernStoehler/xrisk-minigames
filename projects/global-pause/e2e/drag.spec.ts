@@ -11,21 +11,34 @@ test.beforeEach(async ({ page }) => {
 });
 
 async function getCardCenter(page: import("@playwright/test").Page) {
-  // The card is the element with the animate-card-enter class
+  // The card is the portrait element with the animate-card-enter class
   const card = page.locator(".animate-card-enter").first();
   const box = await card.boundingBox();
   if (!box) throw new Error("Card not found");
   return { x: box.x + box.width / 2, y: box.y + box.height / 2, box };
 }
 
-test("dragging card shows option labels", async ({ page }) => {
+test("choice labels are always visible", async ({ page }) => {
+  // Labels should be visible without any interaction
+  const leftLabel = page.locator("[data-testid=label-left]");
+  const rightLabel = page.locator("[data-testid=label-right]");
+  await expect(leftLabel).toBeVisible();
+  await expect(rightLabel).toBeVisible();
+
+  // Labels should have text content
+  const leftText = await leftLabel.textContent();
+  const rightText = await rightLabel.textContent();
+  expect(leftText?.trim().length).toBeGreaterThan(0);
+  expect(rightText?.trim().length).toBeGreaterThan(0);
+});
+
+test("dragging portrait tilts only portrait, not text", async ({ page }) => {
   const { x, y } = await getCardCenter(page);
 
-  // Get speaker name before drag
-  const speakerBefore = await page
-    .locator(".animate-card-enter .font-bold")
-    .last()
-    .textContent();
+  // Get the speaker name — it's outside the swipeable portrait area
+  const speakerName = page.locator(".rounded-b-lg .font-bold").first();
+  const speakerBefore = await speakerName.textContent();
+  expect(speakerBefore).toBeTruthy();
 
   // Start drag
   await page.mouse.move(x, y);
@@ -35,29 +48,20 @@ test("dragging card shows option labels", async ({ page }) => {
   await page.mouse.move(x + 60, y, { steps: 10 });
   await page.waitForTimeout(100);
 
-  // Right option label should be visible (choice overlay on card)
-  // Labels are always in DOM but opacity-controlled — use .last() for right label
-  const rightLabel = page.locator(".drop-shadow-lg").last();
-  await expect(rightLabel).toBeVisible();
-
-  // Drag back left past center to -60px (left tilt)
-  await page.mouse.move(x - 60, y, { steps: 15 });
-  await page.waitForTimeout(100);
-
-  // Left option label should be visible
-  const leftLabel = page.locator(".drop-shadow-lg").first();
-  await expect(leftLabel).toBeVisible();
+  // Portrait should be tilted (has transform)
+  const card = page.locator(".animate-card-enter").first();
+  const transform = await card.evaluate(
+    (el) => (el as HTMLElement).style.transform,
+  );
+  expect(transform).toContain("rotate");
 
   // Release without committing (within ±100px threshold)
   await page.mouse.move(x, y, { steps: 5 });
   await page.mouse.up();
   await page.waitForTimeout(400); // wait for spring-back animation
 
-  // Card should still be showing — same speaker
-  const speakerAfter = await page
-    .locator(".animate-card-enter .font-bold")
-    .last()
-    .textContent();
+  // Speaker name should still be the same (card didn't change)
+  const speakerAfter = await speakerName.textContent();
   expect(speakerAfter).toBe(speakerBefore);
 });
 
