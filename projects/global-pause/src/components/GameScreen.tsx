@@ -24,7 +24,7 @@ export function GameScreen({ state, onChoice }: GameScreenProps) {
       />
 
       {/* Tan middle zone — card area */}
-      <div className="flex-1 flex flex-col bg-tan py-4">
+      <div className="flex-1 flex flex-col bg-tan py-2">
         <SwipeCard
           key={state.activeCard.templateId + "-" + state.turn}
           card={state.activeCard}

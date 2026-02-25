@@ -26,10 +26,10 @@ export function SwipeCard({ card, onChoice, onTiltChange }: SwipeCardProps) {
   }, [tiltDirection, onTiltChange]);
 
   return (
-    <div className="flex flex-col items-center flex-1 relative justify-center px-4 overflow-hidden">
-      <div className="w-full max-w-[340px] flex flex-col">
+    <div className="flex flex-col items-center flex-1 relative justify-start pt-4 px-2 overflow-hidden">
+      <div className="w-full flex flex-col">
         {/* Fixed text area — does NOT tilt */}
-        <div className="bg-tan px-5 py-4 min-h-[72px] flex items-center justify-center rounded-t-lg">
+        <div className="bg-tan px-5 py-3 min-h-[64px] flex items-center justify-center rounded-t-lg">
           <p className="text-text-dark text-[13px] leading-relaxed text-center">
             {card.text}
           </p>

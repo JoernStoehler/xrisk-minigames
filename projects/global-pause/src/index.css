@@ -47,7 +47,7 @@ body {
   }
 }
 .animate-card-enter {
-  animation: card-enter 0.25s ease-out;
+  animation: card-enter 0.25s ease-out backwards;
 }
 
 @keyframes bar-pulse {
